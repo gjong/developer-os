@@ -1,0 +1,70 @@
+## Boot / archiso (required for mkarchiso)
+amd-ucode
+intel-ucode
+mkinitcpio
+mkinitcpio-archiso
+squashfs-tools
+syslinux
+edk2-shell
+dosfstools
+mtools
+e2fsprogs
+grub
+systemd-resolvconf
+
+## Core
+base
+linux
+linux-firmware
+sudo
+networkmanager
+
+## Hyprland / Wayland
+hyprland
+waybar
+rofi-wayland
+kitty
+mako
+xdg-desktop-portal-hyprland
+xdg-desktop-portal-gtk
+polkit-gnome
+
+## Development
+git
+jdk-openjdk
+base-devel
+
+## Shell
+zsh
+starship
+zsh-autosuggestions
+zsh-syntax-highlighting
+
+## Flatpak
+flatpak
+
+## Audio / Bluetooth
+pipewire
+pipewire-pulse
+pipewire-alsa
+wireplumber
+pavucontrol
+bluez
+bluez-utils
+
+## Desktop apps / utilities
+thunar
+thunar-volman
+gvfs
+firefox
+grim
+slurp
+wl-clipboard
+xdg-utils
+
+## Fonts / console
+terminus-font
+ttf-dejavu
+
+## Misc (small QoL)
+less

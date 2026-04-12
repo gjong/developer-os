@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Runs inside the ISO rootfs via arch-chroot (see mkarchiso).
+
+set -euo pipefail
+
+# --- Live user (entry comes from airootfs/etc/passwd; home is pre-seeded in the profile) ---
+if ! id -u liveuser &>/dev/null; then
+  useradd -M -d /home/liveuser -g users -s /usr/bin/zsh liveuser
+fi
+usermod -aG wheel,video,input,audio,storage liveuser 2>/dev/null || true
+passwd -d liveuser &>/dev/null || true
+install -d -m 0755 -o liveuser -g liveuser /home/liveuser/Pictures
+chown -R liveuser:liveuser /home/liveuser
+chmod 0700 /home/liveuser
+
+# --- Sudo for wheel (passwordless on live medium) ---
+install -d -m 0750 /etc/sudoers.d
+printf '%%wheel ALL=(ALL:ALL) NOPASSWD: ALL\n' >/etc/sudoers.d/10-wheel
+chmod 0440 /etc/sudoers.d/10-wheel
+
+# --- Services ---
+systemctl enable NetworkManager.service
+systemctl enable bluetooth.service
+systemctl --global enable pipewire.socket pipewire-pulse.socket wireplumber.service
+
+# --- Optional: autologin on tty1 as liveuser ---
+install -d -m 0755 /etc/systemd/system/getty@tty1.service.d
+cat >/etc/systemd/system/getty@tty1.service.d/autologin.conf <<'EOF'
+[Service]
+ExecStart=
+ExecStart=-/usr/bin/agetty --autologin liveuser --noclear %I $TERM
+EOF
+
+# --- Flatpak + Flathub (system remote) ---
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo

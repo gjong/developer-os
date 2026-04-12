@@ -1,0 +1,55 @@
+configuration {
+    modi: "drun,run";
+    show-icons: true;
+    terminal: "kitty";
+    drun-display-format: "{name}";
+}
+
+* {
+    font: "DejaVu Sans 12";
+    background-color: #1a1b26;
+    text-color: #c0caf5;
+}
+
+window {
+    border: 2px solid;
+    border-color: #7aa2f7;
+    border-radius: 12px;
+    width: 50%;
+    padding: 12px;
+}
+
+inputbar {
+    children: [ prompt, entry ];
+    padding: 8px;
+    border-radius: 8px;
+    background-color: #24283b;
+}
+
+prompt {
+    padding: 0 8px;
+}
+
+entry {
+    padding: 4px 8px;
+    background-color: transparent;
+}
+
+listview {
+    lines: 10;
+    spacing: 4px;
+    scrollbar: false;
+}
+
+element {
+    padding: 8px;
+    border-radius: 6px;
+}
+
+element selected {
+    background-color: #414868;
+}
+
+element-icon {
+    size: 24px;
+}

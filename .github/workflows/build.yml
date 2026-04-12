@@ -1,0 +1,59 @@
+name: Build MyOS ISO
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  PROFILE_DIR: myos
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compute SOURCE_DATE_EPOCH
+        id: epoch
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            E=$(git log -1 --format=%ct "${{ github.event.pull_request.head.sha }}")
+          else
+            E=$(git log -1 --format=%ct HEAD)
+          fi
+          echo "value=$E" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pacman packages
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/pacman-pkg-cache
+          key: pacman-${{ runner.os }}-${{ hashFiles('myos/packages.x86_64', 'myos/pacman.conf') }}
+          restore-keys: |
+            pacman-${{ runner.os }}-
+
+      - name: Build ISO in Arch container
+        run: |
+          set -euo pipefail
+          mkdir -p "${{ github.workspace }}/pacman-pkg-cache"
+          docker run --privileged --rm \
+            -e "SOURCE_DATE_EPOCH=${{ steps.epoch.outputs.value }}" \
+            -v "${{ github.workspace }}:/workspace:rw" \
+            -v "${{ github.workspace }}/pacman-pkg-cache:/var/cache/pacman/pkg:rw" \
+            -w "/workspace/${{ env.PROFILE_DIR }}" \
+            archlinux:latest \
+            bash -lc 'set -euo pipefail; pacman-key --init; pacman-key --populate archlinux; pacman -Sy --needed --noconfirm archiso arch-install-scripts sudo; chmod +x build.sh; ./build.sh'
+
+      - name: Upload ISO artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: myos-iso
+          path: ${{ env.PROFILE_DIR }}/out/*.iso
+          if-no-files-found: error
