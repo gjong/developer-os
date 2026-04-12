@@ -4,8 +4,15 @@
 set -euo pipefail
 
 # --- Live user (entry comes from airootfs/etc/passwd; home is pre-seeded in the profile) ---
+# passwd lists GID 1000, but pacstrap's /etc/group has no "liveuser" name — chown user:liveuser then fails.
+if ! getent group liveuser &>/dev/null; then
+  groupadd -g 1000 liveuser || {
+    groupadd liveuser
+    usermod -g liveuser liveuser
+  }
+fi
 if ! id -u liveuser &>/dev/null; then
-  useradd -M -d /home/liveuser -g users -s /usr/bin/zsh liveuser
+  useradd -M -d /home/liveuser -g liveuser -s /usr/bin/zsh liveuser
 fi
 usermod -aG wheel,video,input,audio,storage liveuser 2>/dev/null || true
 passwd -d liveuser &>/dev/null || true
