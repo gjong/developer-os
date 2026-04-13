@@ -1,8 +1,8 @@
-# Developer Os — custom Arch Linux live image
+# developer-os — custom Arch Linux live image
 
 Reproducible **archiso** profile with **Hyprland**, development tooling, **Flatpak** (Flathub), and a preconfigured **liveuser** session.
 
-**Project docs:** [Documentation index](./docs/README.md) · [ADRs (decisions)](./docs/adr/README.md) · [How to extend docs](./contributing.md)
+**Project docs:** [Documentation index](./docs/README.md) · [ADRs (decisions)](./docs/adr/README.md) · [How to extend docs](./docs/contributing.md)
 
 ## What you get
 
@@ -16,9 +16,11 @@ Reproducible **archiso** profile with **Hyprland**, development tooling, **Flatp
 
 ## Layout
 
+All paths below live under **`developer-os/`** (the archiso profile directory).
+
 | Path | Role |
 |------|------|
-| `profiledef.sh` | ISO metadata, boot modes, squashfs options |
+| `profiledef.sh` | ISO metadata, boot modes, squashfs options (`install_dir` on the medium is **`devos`** — see [ADR-0006](./docs/adr/0006-rename-developer-os-and-install-dir.md)) |
 | `packages.x86_64` | Packages installed into the live system |
 | `pacman.conf` | Pacman config for the build chroot |
 | `airootfs/` | Files overlaid before `pacstrap`; `etc/passwd` seeds `liveuser` |
@@ -28,20 +30,20 @@ Reproducible **archiso** profile with **Hyprland**, development tooling, **Flatp
 ## Local build (on Arch)
 
 ```bash
-cd myos
+cd developer-os
 sudo pacman -S --needed archiso
 chmod +x build.sh
 sudo ./build.sh
 ```
 
-ISOs appear under `myos/out/`. The build uses a working directory under `myos/work/` by default.
+ISOs appear under `developer-os/out/`. The build uses a working directory under `developer-os/work/` by default.
 
 ## Local build (Docker, any host)
 
 Privileged container recommended (mkarchiso uses mounts / loop devices):
 
 ```bash
-cd myos
+cd developer-os
 docker run --rm --privileged \
   -e SOURCE_DATE_EPOCH="$(git log -1 --format=%ct 2>/dev/null || date +%s)" \
   -v "$PWD:/profile" -w /profile \
@@ -67,9 +69,9 @@ docker run --rm --privileged \
 
 ## CI
 
-GitHub Actions workflow: `.github/workflows/build.yml` — builds inside `archlinux:latest`, caches `/var/cache/pacman/pkg`, uploads the ISO artifact.
+GitHub Actions workflow: `.github/workflows/build.yml` — builds a cached Arch **builder** image from `docker/Dockerfile.ci`, runs `mkarchiso` in a privileged container, caches `/var/cache/pacman/pkg`, uploads the ISO artifact.
 
-Rationale is recorded in [ADR-0002: CI Arch container](./docs/adr/0002-ci-archlinux-container.md).
+Rationale: [ADR-0002](./docs/adr/0002-ci-archlinux-container.md), [ADR-0006](./docs/adr/0006-rename-developer-os-and-install-dir.md).
 
 ## Troubleshooting
 

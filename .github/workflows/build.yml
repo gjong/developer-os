@@ -1,4 +1,4 @@
-name: Build MyOS ISO
+name: Build Developer OS ISO
 
 on:
   push:
@@ -12,7 +12,7 @@ permissions:
   actions: write
 
 env:
-  PROFILE_DIR: myos
+  PROFILE_DIR: developer-os
 
 jobs:
   build-iso:
@@ -37,7 +37,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/pacman-pkg-cache
-          key: pacman-${{ runner.os }}-${{ hashFiles('myos/packages.x86_64', 'myos/pacman.conf', 'myos/bootstrap_packages') }}
+          key: pacman-${{ runner.os }}-${{ hashFiles('developer-os/packages.x86_64', 'developer-os/pacman.conf', 'developer-os/bootstrap_packages') }}
           restore-keys: |
             pacman-${{ runner.os }}-
 
@@ -47,11 +47,11 @@ jobs:
       - name: Build Arch ISO builder image (cached layers)
         uses: docker/build-push-action@v6
         with:
-          context: ./myos
+          context: ./developer-os
           file: ./docker/Dockerfile.ci
           push: false
           load: true
-          tags: myos-iso-builder:latest
+          tags: developer-os-iso-builder:latest
           cache-from: type=gha
           # Fork PRs get a read-only token; skip cache export to avoid failing the step.
           cache-to: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && 'type=gha,mode=max' || '' }}
@@ -65,12 +65,12 @@ jobs:
             -v "${{ github.workspace }}:/workspace:rw" \
             -v "${{ github.workspace }}/pacman-pkg-cache:/var/cache/pacman/pkg:rw" \
             -w "/workspace/${{ env.PROFILE_DIR }}" \
-            myos-iso-builder:latest \
+            developer-os-iso-builder:latest \
             bash -lc 'set -euo pipefail; chmod +x build.sh; ./build.sh'
 
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
         with:
-          name: myos-iso
+          name: developer-os-iso
           path: ${{ env.PROFILE_DIR }}/out/*.iso
           if-no-files-found: error

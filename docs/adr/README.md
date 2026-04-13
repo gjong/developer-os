@@ -1,6 +1,6 @@
 # Architecture Decision Records
 
-ADRs record **why** we made non-obvious choices. They complement `myos/README.md`, which explains **how** to build and run the image.
+ADRs record **why** we made non-obvious choices. They complement the root `README.md`, which explains **how** to build and run the image.
 
 ## Index
 
@@ -11,6 +11,7 @@ ADRs record **why** we made non-obvious choices. They complement `myos/README.md
 | [0003](0003-hyprland-tty-session.md) | Start Hyprland from TTY autologin (no display manager) | Accepted |
 | [0004](0004-liveuser-and-customize-hook.md) | Seed `liveuser` in passwd and run `customize.sh` via mkarchiso hook | Accepted |
 | [0005](0005-networkmanager-live-image.md) | Use NetworkManager on the live image | Accepted |
+| [0006](0006-rename-developer-os-and-install-dir.md) | Rename product to developer-os; ISO path `devos/` | Accepted |
 
 ## Creating a new ADR
 

@@ -2,8 +2,8 @@
 
 ## When to update docs
 
-- **User-facing behavior** changes (packages, login flow, keybinds): update `myos/README.md`.
-- **Repository-wide** context (what this repo is): update the root `README.md` and, if needed, `docs/README.md`.
+- **User-facing behavior** changes (packages, login flow, keybinds): update the root `README.md` (profile docs live there).
+- **Repository-wide** context (what this repo is): update the root `README.md` and, if needed, `docs/README.md` and ADRs.
 
 ## When to add an ADR
 

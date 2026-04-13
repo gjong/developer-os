@@ -1,12 +1,13 @@
 #!/usr/bin/env bash
 # shellcheck disable=SC2034
 
-iso_name="myos"
-iso_label="MYOS_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"
-iso_publisher="MyOS"
-iso_application="MyOS — Arch-based Hyprland live image"
+iso_name="developer-os"
+iso_label="DEVOS_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"
+iso_publisher="developer-os"
+iso_application="Developer OS — Arch-based Hyprland live image"
 iso_version="$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y.%m.%d)"
-install_dir="myos"
+# mkarchiso: install_dir max 8 chars, [a-z0-9] only
+install_dir="devos"
 buildmodes=('iso')
 bootmodes=('bios.syslinux'
            'uefi.systemd-boot')

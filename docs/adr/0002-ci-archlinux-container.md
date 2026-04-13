@@ -10,7 +10,7 @@ GitHub-hosted runners use Ubuntu. `mkarchiso` expects an Arch environment (pacst
 
 ## Decision
 
-Run CI builds inside the official **`archlinux:latest`** Docker image with **`docker run --privileged`**. Initialize the keyring, install `archiso`, execute `myos/build.sh`, cache the host-mounted pacman package directory, and upload `myos/out/*.iso` as a workflow artifact.
+Run CI builds using a **cached Docker image** built from `docker/Dockerfile.ci` (Arch + `archiso`), then **`docker run --privileged`** with that image. The workflow runs `developer-os/build.sh`, mounts a host pacman cache, and uploads `developer-os/out/*.iso` as a workflow artifact.
 
 ## Consequences
 

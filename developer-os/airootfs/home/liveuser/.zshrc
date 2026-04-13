@@ -1,4 +1,4 @@
-# MyOS — minimal zsh for live / installed systems
+# Developer OS — minimal zsh for live / installed systems
 
 # Java (OpenJDK default on Arch)
 [[ -L /usr/lib/jvm/default ]] && export JAVA_HOME="$(readlink -f /usr/lib/jvm/default)"
