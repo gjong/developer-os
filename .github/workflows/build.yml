@@ -8,6 +8,8 @@ on:
 
 permissions:
   contents: read
+  # Required for Docker BuildKit cache export (type=gha) in build-push-action.
+  actions: write
 
 env:
   PROFILE_DIR: myos
@@ -31,13 +33,28 @@ jobs:
           fi
           echo "value=$E" >> "$GITHUB_OUTPUT"
 
-      - name: Cache pacman packages
+      - name: Cache pacman packages (mkarchiso / pacstrap)
         uses: actions/cache@v4
         with:
           path: ${{ github.workspace }}/pacman-pkg-cache
-          key: pacman-${{ runner.os }}-${{ hashFiles('myos/packages.x86_64', 'myos/pacman.conf') }}
+          key: pacman-${{ runner.os }}-${{ hashFiles('myos/packages.x86_64', 'myos/pacman.conf', 'myos/bootstrap_packages') }}
           restore-keys: |
             pacman-${{ runner.os }}-
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Arch ISO builder image (cached layers)
+        uses: docker/build-push-action@v6
+        with:
+          context: ./myos
+          file: ./docker/Dockerfile.ci
+          push: false
+          load: true
+          tags: myos-iso-builder:latest
+          cache-from: type=gha
+          # Fork PRs get a read-only token; skip cache export to avoid failing the step.
+          cache-to: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && 'type=gha,mode=max' || '' }}
 
       - name: Build ISO in Arch container
         run: |
@@ -48,8 +65,8 @@ jobs:
             -v "${{ github.workspace }}:/workspace:rw" \
             -v "${{ github.workspace }}/pacman-pkg-cache:/var/cache/pacman/pkg:rw" \
             -w "/workspace/${{ env.PROFILE_DIR }}" \
-            archlinux:latest \
-            bash -lc 'set -euo pipefail; pacman-key --init; pacman-key --populate archlinux; pacman -Sy --needed --noconfirm archiso arch-install-scripts sudo; chmod +x build.sh; ./build.sh'
+            myos-iso-builder:latest \
+            bash -lc 'set -euo pipefail; chmod +x build.sh; ./build.sh'
 
       - name: Upload ISO artifact
         uses: actions/upload-artifact@v4
