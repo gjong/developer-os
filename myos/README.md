@@ -2,6 +2,8 @@
 
 Reproducible **archiso** profile with **Hyprland**, development tooling, **Flatpak** (Flathub), and a preconfigured **liveuser** session.
 
+**Project docs:** [Documentation index](../docs/README.md) · [ADRs (decisions)](../docs/adr/README.md) · [How to extend docs](../docs/contributing.md)
+
 ## What you get
 
 - **Boot**: BIOS (SYSLINUX) + UEFI (**systemd-boot**), matching upstream archiso releng layout.
@@ -66,3 +68,9 @@ docker run --rm --privileged \
 ## CI
 
 GitHub Actions workflow: `.github/workflows/build.yml` — builds inside `archlinux:latest`, caches `/var/cache/pacman/pkg`, uploads the ISO artifact.
+
+Rationale is recorded in [ADR-0002: CI Arch container](../docs/adr/0002-ci-archlinux-container.md).
+
+## Troubleshooting
+
+- **`invalid group liveuser` during build:** `customize.sh` creates the `liveuser` group before `chown`; see [ADR-0004](../docs/adr/0004-liveuser-and-customize-hook.md).
