@@ -37,6 +37,7 @@ tooltip label {
 }
 
 /* —— Shared “pill” modules —— */
+#custom-launcher,
 #workspaces,
 #window,
 #tray,
@@ -50,6 +51,17 @@ tooltip label {
     margin: 4px 3px;
     padding: 0 12px;
     min-height: 28px;
+}
+
+#custom-launcher {
+    color: @blue;
+    font-size: 16px;
+    padding: 0 14px;
+    border-color: rgba(122, 162, 247, 0.45);
+}
+
+#custom-launcher:hover {
+    background: rgba(122, 162, 247, 0.15);
 }
 
 #workspaces {

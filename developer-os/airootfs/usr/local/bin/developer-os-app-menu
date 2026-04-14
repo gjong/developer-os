@@ -1,0 +1,3 @@
+#!/bin/sh
+# Application launcher (Rofi drun). Used by Hyprland Super+D and Waybar.
+exec rofi -show drun -show-icons -matching fuzzy -sort

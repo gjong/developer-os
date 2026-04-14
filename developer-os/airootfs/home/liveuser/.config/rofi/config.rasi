@@ -3,10 +3,12 @@ configuration {
     show-icons: true;
     terminal: "kitty";
     drun-display-format: "{name}";
+    display-drun: "󰀻  Apps";
+    display-run: "󰆍  Run";
 }
 
 * {
-    font: "DejaVu Sans 12";
+    font: "JetBrainsMono Nerd Font 12";
     background-color: #1a1b26;
     text-color: #c0caf5;
 }
@@ -15,7 +17,8 @@ window {
     border: 2px solid;
     border-color: #7aa2f7;
     border-radius: 12px;
-    width: 50%;
+    width: 42%;
+    max-width: 720px;
     padding: 12px;
 }
 
@@ -36,7 +39,7 @@ entry {
 }
 
 listview {
-    lines: 10;
+    lines: 12;
     spacing: 4px;
     scrollbar: false;
 }
