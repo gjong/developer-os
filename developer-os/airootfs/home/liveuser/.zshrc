@@ -1,8 +1,5 @@
 # Developer OS — minimal zsh for live / installed systems
 
-# Java (OpenJDK default on Arch)
-[[ -L /usr/lib/jvm/default ]] && export JAVA_HOME="$(readlink -f /usr/lib/jvm/default)"
-
 HISTFILE=~/.zsh_history
 HISTSIZE=5000
 SAVEHIST=5000

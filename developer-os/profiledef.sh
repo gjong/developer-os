@@ -4,7 +4,7 @@
 iso_name="developer-os"
 iso_label="DEVOS_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"
 iso_publisher="developer-os"
-iso_application="Developer OS — Arch-based Hyprland live image"
+iso_application="Developer OS — A developer-friendly live image"
 iso_version="$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y.%m.%d)"
 # mkarchiso: install_dir max 8 chars, [a-z0-9] only
 install_dir="devos"

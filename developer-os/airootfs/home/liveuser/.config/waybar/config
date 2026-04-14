@@ -1,71 +1,141 @@
-{
-    "layer": "top",
-    "position": "top",
-    "height": 34,
-    "spacing": 0,
-    "margin-top": 8,
-    "margin-left": 14,
-    "margin-right": 14,
-    "modules-left": ["custom/launcher", "hyprland/workspaces"],
-    "modules-center": ["hyprland/window"],
-    "modules-right": ["tray", "pulseaudio", "network", "battery", "clock"],
-    "custom/launcher": {
-        "format": "󰀻",
-        "tooltip-format": "Applications — click or press Super+D",
-        "on-click": "/usr/local/bin/developer-os-app-menu"
-    },
-    "hyprland/workspaces": {
-        "disable-scroll": false,
-        "all-outputs": false,
-        "warp-on-scroll": false,
-        "format": "{id}"
-    },
-    "hyprland/window": {
-        "max-length": 52,
-        "separate-outputs": true
-    },
-    "clock": {
-        "format": "󰃭  {:%a %-d %b · %H:%M}",
-        "format-alt": "󰃭  {:%Y-%m-%d · %H:%M:%S}",
-        "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
-    },
-    "network": {
-        "format-wifi": "󰤨  {essid}",
-        "format-ethernet": "󰈀  {ipaddr}",
-        "format-disconnected": "󰤭  offline",
-        "format-linked": "󰈀  {ifname} (no IP)",
-        "tooltip-format": "{ifname}: {ipaddr}/{cidr}\n  {essid} ({signalStrength}%)",
-        "interval": 5
-    },
-    "pulseaudio": {
-        "format": "{icon}  {volume}%",
-        "format-bluetooth": "{icon}  {volume}% ",
-        "format-muted": "󰝟",
-        "format-icons": {
-            "headphone": "",
-            "hands-free": "",
-            "headset": "",
-            "phone": "",
-            "portable": "",
-            "car": "",
-            "default": ["", "", ""]
+[
+    {
+        "layer": "top",
+        "position": "top",
+        "height": 24,
+        "spacing": 5,
+        "modules-left": [
+            "custom/launcher",
+            "hyprland/window"
+        ],
+        "modules-center": [
+            "sway/window"
+        ],
+        "modules-right": [
+            "temperature",
+            "network",
+            "pulseaudio",
+            "backlight",
+            "keyboard-state",
+            "battery",
+            "tray",
+            "clock"
+        ],
+        "hyprland/window": {
+            "format": "{class}",
+            "max-length": 20,
+            "rewrite": {
+                "^(?!.*\\S).*": "Finder"
+            }
         },
-        "scroll-step": 2,
-        "on-click": "pavucontrol"
-    },
-    "battery": {
-        "states": {
-            "warning": 30,
-            "critical": 15
+        "custom/launcher": {
+            "format": "🔍",
+            "on-click": "rofi -show drun -show-icons -matching fuzzy -sort",
+            "tooltip": false
         },
-        "format": "{icon}  {capacity}%",
-        "format-charging": "󰂄  {capacity}%",
-        "format-plugged": "󰚥  {capacity}%",
-        "format-full": "󰁹  {capacity}%",
-        "format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
+        "sway/mode": {
+            "format": "<span style=\"italic\">{}</span>"
+        },
+        "sway/scratchpad": {
+            "format": "{icon} {count}",
+            "show-empty": false,
+            "format-icons": [
+                "",
+                ""
+            ],
+            "tooltip": true,
+            "tooltip-format": "{app}: {title}"
+        },
+        "tray": {
+            "spacing": 10
+        },
+        "clock": {
+            "format": "{:%A %B %d %H:%M %p}",
+            "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
+        },
+        "backlight": {
+            "format": "{icon} {percent}%",
+            "format-icons": [
+                "󰃞",
+                "󰃟",
+                "󰃝",
+                "󰃠"
+            ]
+        },
+        "battery": {
+            "states": {
+                "warning": 30,
+                "critical": 15
+            },
+            "format": "{icon} {capacity}%",
+            "format-charging": " {capacity}%",
+            "format-plugged": " {capacity}%",
+            "format-alt": "{icon} {time}",
+            "format-icons": [
+                "",
+                "",
+                "",
+                "",
+                ""
+            ]
+        },
+        "network": {
+            "format-wifi": "{essid} ({signalStrength}%) ",
+            "format-ethernet": " {ifname}",
+            "tooltip-format": " {ifname} via {gwaddr}",
+            "format-linked": " {ifname} (No IP)",
+            "format-disconnected": "Disconnected ⚠ {ifname}",
+            "format-alt": " {ifname}: {ipaddr}/{cidr}"
+        },
+        "pulseaudio": {
+            "scroll-step": 5,
+            "format": "{icon}  {volume}% {format_source}",
+            "format-bluetooth": " {icon} {volume}% {format_source}",
+            "format-bluetooth-muted": "  {icon} {format_source}",
+            "format-muted": "  {format_source}",
+            "format-source": " {volume}%",
+            "format-source-muted": "",
+            "format-icons": {
+                "default": [
+                    "",
+                    "",
+                    ""
+                ]
+            },
+            "on-click": "pavucontrol",
+            "on-click-right": "foot -a pw-top pw-top"
+        }
     },
-    "tray": {
-        "icon-size": 20,
-        "spacing": 10
+    {
+        "layer": "top",
+        "position": "bottom",
+        "height": 41,
+        "width": 2,
+        "modules-left": [
+            "custom/os_button"
+        ],
+        "modules-center": [
+            "sway/mode",
+            "wlr/taskbar"
+        ],
+        "margin": "4",
+        "spacing": "5",
+        "sway/window": {
+            "max-length": 50
+        },
+        "custom/os_button": {
+            "format": "🔍",
+            "on-click": "wofi --show drun",
+            "tooltip": false
+        },
+        "wlr/taskbar": {
+            "format": "{icon}",
+            "icon-size": 36,
+            "spacing": 3,
+            "on-click-middle": "close",
+            "tooltip-format": "{title}",
+            "ignore-list": [],
+            "on-click": "activate"
+        }
     }
-}
+]

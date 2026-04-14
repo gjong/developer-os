@@ -1,175 +1,148 @@
-/* Tokyo Night palette — matches Hyprland / Waybar theme */
-@define-color bg_dark #16161e;
-@define-color bg #1a1b26;
-@define-color surface #24283b;
-@define-color surface2 #414868;
-@define-color fg #c0caf5;
-@define-color muted #565f89;
-@define-color blue #7aa2f7;
-@define-color cyan #7dcfff;
-@define-color red #f7768e;
-@define-color green #9ece6a;
-
 * {
-    border: none;
-    border-radius: 0;
-    font-family: "JetBrainsMono Nerd Font", "JetBrainsMono NF", "JetBrains Mono", "DejaVu Sans", sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    min-height: 0;
+  font-family: "JetBrainsMono Nerd Font", "JetBrainsMonoNL Nerd Font", "JetBrainsMono NF", "Symbols Nerd Font Mono", "Symbols Nerd Font", "DejaVu Sans", sans-serif;
+  font-size: 16px;
+  min-height: 0;
+  border-radius: 1rem;
+  padding: 0.1rem;
 }
 
 window#waybar {
-    background-color: transparent;
-    color: @fg;
+  background: rgba(255, 255, 255, 0.5);
+  color: rgb(0, 0, 0);
 }
 
 tooltip {
-    background: @surface;
-    color: @fg;
-    border: 1px solid @surface2;
-    border-radius: 10px;
-    padding: 8px 12px;
+  background: #000000;
 }
-
 tooltip label {
-    color: @fg;
+  color: white;
 }
-
-/* —— Shared “pill” modules —— */
-#custom-launcher,
-#workspaces,
-#window,
-#tray,
-#pulseaudio,
-#network,
-#battery,
-#clock {
-    background: @surface;
-    border: 1px solid rgba(65, 72, 104, 0.55);
-    border-radius: 12px;
-    margin: 4px 3px;
-    padding: 0 12px;
-    min-height: 28px;
-}
-
-#custom-launcher {
-    color: @blue;
-    font-size: 16px;
-    padding: 0 14px;
-    border-color: rgba(122, 162, 247, 0.45);
-}
-
-#custom-launcher:hover {
-    background: rgba(122, 162, 247, 0.15);
-}
-
-#workspaces {
-    padding: 2px 6px;
-}
-
-#workspaces button {
-    padding: 4px 10px;
-    margin: 2px;
-    border-radius: 8px;
-    color: @muted;
+  
+  #workspaces button {
+    padding: 0 5px;
     background: transparent;
-    transition: background 150ms ease, color 150ms ease;
-}
-
-#workspaces button.empty {
-    color: rgba(86, 95, 137, 0.45);
-}
-
-#workspaces button.visible {
-    color: @cyan;
-}
-
-#workspaces button.active {
-    color: @bg_dark;
-    background: @blue;
-    font-weight: 700;
-}
-
-#workspaces button:hover {
-    color: @fg;
-    background: rgba(122, 162, 247, 0.22);
-}
-
-#workspaces button.urgent {
-    color: @bg_dark;
-    background: @red;
-}
-
-/* Window title */
-#window {
-    color: #a9b1d6;
-    font-weight: 500;
-}
-
-#window.empty {
-    color: @muted;
-    font-style: italic;
-}
-
-/* Tray */
-#tray {
+    color: white;
+    border-bottom: 3px solid transparent;
+  }
+  
+  #workspaces button.focused {
+    background: #64727d;
+    border-bottom: 3px solid white;
+  }
+  
+  #mode,
+  #clock,
+  #battery {
     padding: 0 10px;
-}
-
-#tray > .passive {
-    -gtk-icon-effect: dim;
-}
-
-#tray > .active {
-    -gtk-icon-effect: highlight;
-}
-
-/* Audio */
-#pulseaudio {
-    color: @cyan;
-}
-
-#pulseaudio.muted {
-    color: @muted;
-}
-
-/* Network */
-#network {
-    color: @blue;
-}
-
-#network.disconnected,
-#network.disabled {
-    color: @red;
-}
-
-/* Battery */
-#battery {
-    color: @green;
-}
-
-#battery.warning:not(.charging) {
-    color: #e0af68;
-}
-
-#battery.critical:not(.charging) {
-    color: @red;
-    animation: blink-critical 1s ease-in-out infinite alternate;
-}
-
-@keyframes blink-critical {
+  }
+  
+  #mode {
+    background: #64727d;
+    border-bottom: 3px solid white;
+  }
+  
+  #clock,
+  #battery,
+  #cpu,
+  #memory,
+  #disk,
+  #temperature,
+  #backlight,
+  #network,
+  #pulseaudio,
+  #wireplumber,
+  #custom-media,
+  #tray,
+  #mode,
+  #idle_inhibitor,
+  #scratchpad,
+  #mpd {
+    margin: 2px;
+    padding-left: 4px;
+    padding-right: 4px;
+    color: #000000;
+  }
+  
+  .modules-left > widget:first-child > #workspaces {
+    margin-left: 0;
+  }
+  
+  .modules-right > widget:last-child > #workspaces {
+    margin-right: 0;
+  }
+  
+  #clock {
+    font-size: 14px;
+  }
+  
+  #battery icon {
+    color: red;
+  }
+  
+  #battery.charging,
+  #battery.plugged {
+    color: #ffffff;
+    background-color: #26a65b;
+  }
+  
+  @keyframes blink {
     to {
-        opacity: 0.45;
+      background-color: #ffffff;
+      color: #000000;
     }
-}
-
-#battery.charging {
-    color: @cyan;
-}
-
-/* Clock */
-#clock {
-    color: @fg;
-    font-weight: 600;
-}
+  }
+  
+  #battery.warning:not(.charging) {
+    background-color: #f53c3c;
+    color: #ffffff;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+  }
+  
+  #battery.critical:not(.charging) {
+    background-color: #f53c3c;
+    color: #ffffff;
+    animation-name: blink;
+    animation-duration: 0.5s;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+  }
+  
+  label:focus {
+    background-color: #000000;
+  }
+  
+  #network.disconnected {
+    background-color: #f53c3c;
+  }
+  
+  #temperature.critical {
+    background-color: #eb4d4b;
+  }
+  
+  #idle_inhibitor.activated {
+    background-color: #ecf0f1;
+    color: #2d3436;
+  }
+  
+  #tray > .passive {
+    -gtk-icon-effect: dim;
+  }
+  
+  #tray > .needs-attention {
+    -gtk-icon-effect: highlight;
+    background-color: #eb4d4b;
+  }
+  
+  #custom-os_button {
+    font-size: 32px;
+    transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+  #custom-os_button:hover {
+    background: white;
+    color: black;
+  }

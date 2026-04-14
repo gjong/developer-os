@@ -1,58 +1,44 @@
 configuration {
-    modi: "drun,run";
-    show-icons: true;
-    terminal: "kitty";
-    drun-display-format: "{name}";
-    display-drun: "󰀻  Apps";
-    display-run: "󰆍  Run";
+    modes: "drun,run";
+    font:  "Sans 11";
 }
 
 * {
-    font: "JetBrainsMono Nerd Font 12";
-    background-color: #1a1b26;
-    text-color: #c0caf5;
+    foreground: #f8f8f2;
+    background: #181825;
+    selected-normal-background:  #2d3f76;
+    selected-active-background:  #ffb86c;
+    alternate-normal-background: var(background);
+    alternate-active-background: var(background);
 }
 
 window {
-    border: 2px solid;
-    border-color: #7aa2f7;
-    border-radius: 12px;
-    width: 42%;
-    max-width: 720px;
-    padding: 12px;
+    width: 32%;
 }
 
 inputbar {
-    children: [ prompt, entry ];
-    padding: 8px;
-    border-radius: 8px;
-    background-color: #24283b;
+    padding:  10px;
+    children: [ entry ];
 }
 
-prompt {
-    padding: 0 8px;
+message {
+    border: 2px solid 0px 0px;
 }
 
 entry {
-    padding: 4px 8px;
-    background-color: transparent;
+    placeholder: "";
 }
 
 listview {
-    lines: 12;
-    spacing: 4px;
+    lines:     6;
     scrollbar: false;
+    border:    2px solid 0px 0px;
 }
 
 element {
-    padding: 8px;
-    border-radius: 6px;
+    padding: 10px;
 }
 
-element selected {
-    background-color: #414868;
-}
-
-element-icon {
-    size: 24px;
+element-text {
+    highlight: #0db9d7;
 }
