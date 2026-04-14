@@ -76,3 +76,4 @@ Rationale: [ADR-0002](./docs/adr/0002-ci-archlinux-container.md), [ADR-0006](./d
 ## Troubleshooting
 
 - **`invalid group liveuser` during build:** `customize.sh` creates the `liveuser` group before `chown`; see [ADR-0004](./docs/adr/0004-liveuser-and-customize-hook.md).
+- **Hyprland warnings (`gestures:workspace_swipe`, `windowrulev2` deprecated):** live config uses current `gesture =` and `windowrule` syntax; see [ADR-0007](./docs/adr/0007-hyprland-gesture-windowrule-syntax.md).
