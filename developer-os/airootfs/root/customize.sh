@@ -40,3 +40,30 @@ EOF
 
 # --- Flatpak + Flathub (system remote) ---
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+# --- Hyprbars: Hyprland plugin from hyprland-plugins (not a pacman package; hyprpm + exec-once reload) ---
+# Runs as liveuser so state is under /home/liveuser/.local/share/hyprpm. Needs git + network during mkarchiso.
+if command -v hyprpm &>/dev/null; then
+  _hyprpm() { runuser -u liveuser -- env HOME=/home/liveuser USER=liveuser LOGNAME=liveuser "$@"; }
+  set +e
+  _hyprpm hyprpm update
+  _st=$?
+  set -e
+  if (( _st != 0 )); then
+    echo "[customize.sh] WARNING: hyprpm update failed (${_st}); hyprbars skipped (no network or headers mismatch)." >&2
+  else
+    set +e
+    _hyprpm hyprpm add https://github.com/hyprwm/hyprland-plugins
+    set -e
+    _hyprpm hyprpm enable hyprbars
+    set +e
+    _hyprpm hyprpm update
+    _st2=$?
+    set -e
+    if (( _st2 != 0 )); then
+      echo "[customize.sh] WARNING: hyprpm plugin build failed (${_st2}); check build log for hyprbars." >&2
+    else
+      echo "[customize.sh] hyprbars plugin installed for liveuser (hyprpm)."
+    fi
+  fi
+fi

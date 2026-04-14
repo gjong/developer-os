@@ -23,6 +23,13 @@ networkmanager
 hyprland
 hyprpaper
 waybar
+## hyprpm (compile hyprbars at image build; Hyprland optdepends + wiki deps)
+cpio
+cmake
+meson
+ninja
+glaze
+hyprland-protocols
 rofi-wayland
 kitty
 mako

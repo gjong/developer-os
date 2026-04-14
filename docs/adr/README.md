@@ -13,6 +13,7 @@ ADRs record **why** we made non-obvious choices. They complement the root `READM
 | [0005](0005-networkmanager-live-image.md) | Use NetworkManager on the live image | Accepted |
 | [0006](0006-rename-developer-os-and-install-dir.md) | Rename product to developer-os; ISO path `devos/` | Accepted |
 | [0007](0007-hyprland-gesture-windowrule-syntax.md) | Hyprland: gesture line + `windowrule` / `match:` syntax | Accepted |
+| [0008](0008-hyprbars-via-hyprpm.md) | Hyprbars via `hyprpm` at image build + `exec-once` reload | Accepted |
 
 ## Creating a new ADR
 
