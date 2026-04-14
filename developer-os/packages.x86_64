@@ -21,6 +21,7 @@ networkmanager
 
 ## Hyprland / Wayland
 hyprland
+hyprpaper
 waybar
 rofi-wayland
 kitty
@@ -57,6 +58,9 @@ thunar
 thunar-volman
 gvfs
 firefox
+adwaita-icon-theme
+qt6-wayland
+libdecor
 grim
 slurp
 wl-clipboard
@@ -65,6 +69,7 @@ xdg-utils
 ## Fonts / console
 terminus-font
 ttf-dejavu
+ttf-jetbrains-mono-nerd
 
 ## Misc (small QoL)
 less

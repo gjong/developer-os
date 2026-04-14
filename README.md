@@ -56,6 +56,14 @@ docker run --rm --privileged \
   '
 ```
 
+## Locally running the ISO in Qemu
+
+On Windows systems:
+
+```shell
+qemu-system-x86_64.exe -m 4086 -accel whpx -smp cores=6 -M pc -device ich9-usb-ehci1 -device usb-tablet -cdrom out\developer-os-*.iso
+```
+
 ## Live session
 
 - User **`liveuser`** (empty password, **sudo** via `wheel`).
@@ -75,5 +83,6 @@ Rationale: [ADR-0002](./docs/adr/0002-ci-archlinux-container.md), [ADR-0006](./d
 
 ## Troubleshooting
 
+- **ISO unchanged after editing `airootfs/` or packages:** `mkarchiso` reuses `developer-os/work/` until you remove it; see [Rebuilding when you change the profile](#rebuilding-when-you-change-the-profile).
 - **`invalid group liveuser` during build:** `customize.sh` creates the `liveuser` group before `chown`; see [ADR-0004](./docs/adr/0004-liveuser-and-customize-hook.md).
 - **Hyprland warnings (`gestures:workspace_swipe`, `windowrulev2` deprecated):** live config uses current `gesture =` and `windowrule` syntax; see [ADR-0007](./docs/adr/0007-hyprland-gesture-windowrule-syntax.md).

@@ -1,27 +1,51 @@
 {
     "layer": "top",
     "position": "top",
-    "height": 30,
-    "spacing": 6,
-    "modules-left": ["clock"],
-    "modules-center": [],
-    "modules-right": ["network", "pulseaudio", "battery", "tray"],
+    "height": 34,
+    "spacing": 0,
+    "margin-top": 8,
+    "margin-left": 14,
+    "margin-right": 14,
+    "modules-left": ["hyprland/workspaces"],
+    "modules-center": ["hyprland/window"],
+    "modules-right": ["tray", "pulseaudio", "network", "battery", "clock"],
+    "hyprland/workspaces": {
+        "disable-scroll": false,
+        "all-outputs": false,
+        "warp-on-scroll": false,
+        "format": "{id}"
+    },
+    "hyprland/window": {
+        "max-length": 52,
+        "separate-outputs": true
+    },
     "clock": {
-        "format": "{:%Y-%m-%d %H:%M}",
+        "format": "󰃭  {:%a %-d %b · %H:%M}",
+        "format-alt": "󰃭  {:%Y-%m-%d · %H:%M:%S}",
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>"
     },
     "network": {
-        "format-wifi": "  {essid} ({signalStrength}%)",
-        "format-ethernet": "󰈁  {ifname}",
-        "format-disconnected": "⚠ offline",
-        "tooltip-format": "{ifname}: {ipaddr}/{cidr}"
+        "format-wifi": "󰤨  {essid}",
+        "format-ethernet": "󰈀  {ipaddr}",
+        "format-disconnected": "󰤭  offline",
+        "format-linked": "󰈀  {ifname} (no IP)",
+        "tooltip-format": "{ifname}: {ipaddr}/{cidr}\n  {essid} ({signalStrength}%)",
+        "interval": 5
     },
     "pulseaudio": {
-        "format": "{icon} {volume}%",
+        "format": "{icon}  {volume}%",
+        "format-bluetooth": "{icon}  {volume}% ",
         "format-muted": "󰝟",
         "format-icons": {
-            "default": ["", "", ""]
+            "headphone": "",
+            "hands-free": "",
+            "headset": "",
+            "phone": "",
+            "portable": "",
+            "car": "",
+            "default": ["", "", ""]
         },
+        "scroll-step": 2,
         "on-click": "pavucontrol"
     },
     "battery": {
@@ -29,11 +53,14 @@
             "warning": 30,
             "critical": 15
         },
-        "format": "{icon} {capacity}%",
+        "format": "{icon}  {capacity}%",
+        "format-charging": "󰂄  {capacity}%",
+        "format-plugged": "󰚥  {capacity}%",
+        "format-full": "󰁹  {capacity}%",
         "format-icons": ["󰂎", "󰁺", "󰁻", "󰁼", "󰁽", "󰁾", "󰁿", "󰂀", "󰂁", "󰂂", "󰁹"]
     },
     "tray": {
-        "icon-size": 18,
-        "spacing": 8
+        "icon-size": 20,
+        "spacing": 10
     }
 }
