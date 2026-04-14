@@ -9,7 +9,7 @@ Reproducible **archiso** profile with **Hyprland**, development tooling, **Flatp
 - **Boot**: BIOS (SYSLINUX) + UEFI (**systemd-boot**), matching upstream archiso releng layout.
 - **Desktop**: Hyprland, Waybar, Rofi (Wayland), Mako, Kitty, Polkit GNOME agent.
 - **Apps**: Thunar, Firefox, screenshot tools (`grim` / `slurp`), `wl-clipboard`.
-- **Dev**: Git, OpenJDK (`jdk-openjdk`), `base-devel`.
+- **Dev**: Git, `base-devel`, **vfox** (pinned GitHub release → `/usr/local/bin`; see [ADR-0009](./docs/adr/0009-vfox-binary-from-github.md)).
 - **Shell**: Zsh + Starship + autosuggestions + syntax highlighting (from distro packages).
 - **Audio / BT**: PipeWire + WirePlumber, Bluetooth stack.
 - **Flatpak**: `flathub` remote added at image build time.
@@ -87,3 +87,4 @@ Rationale: [ADR-0002](./docs/adr/0002-ci-archlinux-container.md), [ADR-0006](./d
 - **`invalid group liveuser` during build:** `customize.sh` creates the `liveuser` group before `chown`; see [ADR-0004](./docs/adr/0004-liveuser-and-customize-hook.md).
 - **Hyprland warnings (`gestures:workspace_swipe`, `windowrulev2` deprecated):** live config uses current `gesture =` and `windowrule` syntax; see [ADR-0007](./docs/adr/0007-hyprland-gesture-windowrule-syntax.md).
 - **Hyprbars / title bars missing:** hyprbars is a plugin; the image runs **`hyprpm`** during `customize.sh` to build it and **`exec-once = hyprpm reload`** to load it. If the build step failed (no network in chroot, ABI mismatch), check the mkarchiso log; see [ADR-0008](./docs/adr/0008-hyprbars-via-hyprpm.md).
+- **`vfox` missing:** installed from a **pinned GitHub release** in `customize.sh` (needs network). After boot, `vfox` is on `PATH`; zsh runs `eval "$(vfox activate zsh)"`. See [ADR-0009](./docs/adr/0009-vfox-binary-from-github.md).

@@ -14,6 +14,7 @@ ADRs record **why** we made non-obvious choices. They complement the root `READM
 | [0006](0006-rename-developer-os-and-install-dir.md) | Rename product to developer-os; ISO path `devos/` | Accepted |
 | [0007](0007-hyprland-gesture-windowrule-syntax.md) | Hyprland: gesture line + `windowrule` / `match:` syntax | Accepted |
 | [0008](0008-hyprbars-via-hyprpm.md) | Hyprbars via `hyprpm` at image build + `exec-once` reload | Accepted |
+| [0009](0009-vfox-binary-from-github.md) | vfox from pinned GitHub release + zsh `vfox activate` | Accepted |
 
 ## Creating a new ADR
 

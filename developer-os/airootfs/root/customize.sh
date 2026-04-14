@@ -41,6 +41,43 @@ EOF
 # --- Flatpak + Flathub (system remote) ---
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
+# --- vfox (version-fox): not in Arch [extra]; install official GitHub release (x86_64) ---
+# Pin version here; bump when upgrading the live image.
+VFOX_VERSION="1.0.8"
+VFOX_TAG="v${VFOX_VERSION}"
+VFOX_TAR="vfox_${VFOX_VERSION}_linux_x86_64.tar.gz"
+VFOX_BASE="https://github.com/version-fox/vfox/releases/download/${VFOX_TAG}"
+install_vfox_from_github() {
+  local tmp _root
+  tmp="$(mktemp -d)"
+  # shellcheck disable=SC2064
+  trap "rm -rf '${tmp}'" EXIT
+  curl -fsSL "${VFOX_BASE}/checksums.txt" -o "${tmp}/checksums.txt"
+  curl -fsSL "${VFOX_BASE}/${VFOX_TAR}" -o "${tmp}/${VFOX_TAR}"
+  (cd "${tmp}" && grep -F "${VFOX_TAR}" checksums.txt | sha256sum -c -)
+  tar -xzf "${tmp}/${VFOX_TAR}" -C "${tmp}"
+  _root="${tmp}/vfox_${VFOX_VERSION}_linux_x86_64"
+  install -d /usr/local/share/bash-completion/completions /usr/local/share/zsh/site-functions
+  install -Dm0755 "${_root}/vfox" /usr/local/bin/vfox
+  install -Dm0644 "${_root}/completions/bash_autocomplete" /usr/local/share/bash-completion/completions/vfox
+  install -Dm0644 "${_root}/completions/zsh_autocomplete" /usr/local/share/zsh/site-functions/_vfox
+  trap - EXIT
+  rm -rf "${tmp}"
+}
+if command -v curl &>/dev/null; then
+  set +e
+  install_vfox_from_github
+  _vf=$?
+  set -e
+  if (( _vf != 0 )); then
+    echo "[customize.sh] WARNING: vfox install failed (${_vf}); need network during ISO build." >&2
+  else
+    echo "[customize.sh] vfox ${VFOX_VERSION} installed to /usr/local/bin/vfox"
+  fi
+else
+  echo "[customize.sh] WARNING: curl missing; skipping vfox install." >&2
+fi
+
 # --- Hyprbars: Hyprland plugin from hyprland-plugins (not a pacman package; hyprpm + exec-once reload) ---
 # Runs as liveuser so state is under /home/liveuser/.local/share/hyprpm. Needs git + network during mkarchiso.
 if command -v hyprpm &>/dev/null; then
