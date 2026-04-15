@@ -75,7 +75,7 @@ Requirements: **UEFI** firmware (this installer does not set up BIOS boot).
 4. Confirm with **`YES`** when prompted (the disk is erased).
 5. When finished: **`sudo umount -R /mnt`**, reboot, and remove the USB stick.
 
-The installed system receives the same Hyprland/dotfile layout as **`liveuser`** (copied into the new home), **`vfox`** if it was present on the ISO, and **Flathub**. **Hyprbars** is built with **`hyprpm`** on the live image; on the installed system run **`hyprpm update`** once you have network, then add **`exec-once = hyprpm reload`** to `~/.config/hypr/hyprland.conf` if it is missing.
+The installed system receives the same Hyprland/dotfile layout as **`liveuser`** (copied into the new home), **`vfox`** if it was present on the ISO, and **Flathub**. **`hyprland.conf`** already contains **`exec-once = hyprpm reload`**; after install, run **`hyprpm update`** once with network so the hyprbars plugin matches the on-disk Hyprland version.
 
 ## Live session
 
