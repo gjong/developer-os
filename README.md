@@ -13,6 +13,7 @@ Reproducible **archiso** profile with **Hyprland**, development tooling, **Flatp
 - **Shell**: Zsh + Starship + autosuggestions + syntax highlighting (from distro packages).
 - **Audio / BT**: PipeWire + WirePlumber, Bluetooth stack.
 - **Flatpak**: `flathub` remote added at image build time.
+- **Install to disk**: run **`sudo developer-os-install`** from the live session (UEFI, wipes target disk). See [Install to disk](#install-to-disk) and [ADR-0010](./docs/adr/0010-install-to-disk.md).
 
 ## Layout
 
@@ -64,6 +65,18 @@ On Windows systems:
 qemu-system-x86_64.exe -m 4086 -accel whpx -smp cores=6 -M pc -device ich9-usb-ehci1 -device usb-tablet -cdrom out\developer-os-*.iso
 ```
 
+## Install to disk
+
+Requirements: **UEFI** firmware (this installer does not set up BIOS boot).
+
+1. Boot the ISO and connect to the network (same as live use).
+2. Run **`sudo developer-os-install`**.
+3. Enter the target whole disk (e.g. `/dev/nvme0n1`), a username (default **`developer`**), and a **password** for that account.
+4. Confirm with **`YES`** when prompted (the disk is erased).
+5. When finished: **`sudo umount -R /mnt`**, reboot, and remove the USB stick.
+
+The installed system receives the same Hyprland/dotfile layout as **`liveuser`** (copied into the new home), **`vfox`** if it was present on the ISO, and **Flathub**. **Hyprbars** is built with **`hyprpm`** on the live image; on the installed system run **`hyprpm update`** once you have network, then add **`exec-once = hyprpm reload`** to `~/.config/hypr/hyprland.conf` if it is missing.
+
 ## Live session
 
 - User **`liveuser`** (empty password, **sudo** via `wheel`).
@@ -88,3 +101,4 @@ Rationale: [ADR-0002](./docs/adr/0002-ci-archlinux-container.md), [ADR-0006](./d
 - **Hyprland warnings (`gestures:workspace_swipe`, `windowrulev2` deprecated):** live config uses current `gesture =` and `windowrule` syntax; see [ADR-0007](./docs/adr/0007-hyprland-gesture-windowrule-syntax.md).
 - **Hyprbars / title bars missing:** hyprbars is a plugin; the image runs **`hyprpm`** during `customize.sh` to build it and **`exec-once = hyprpm reload`** to load it. If the build step failed (no network in chroot, ABI mismatch), check the mkarchiso log; see [ADR-0008](./docs/adr/0008-hyprbars-via-hyprpm.md).
 - **`vfox` missing:** installed from a **pinned GitHub release** in `customize.sh` (needs network). After boot, `vfox` is on `PATH`; zsh runs `eval "$(vfox activate zsh)"`. See [ADR-0009](./docs/adr/0009-vfox-binary-from-github.md).
+- **Install script fails at `pacstrap`:** ensure mirrors work (`reflector` is not included by default); use `pacman -Sy` on the live system first or edit `pacman.conf` / mirrorlist.

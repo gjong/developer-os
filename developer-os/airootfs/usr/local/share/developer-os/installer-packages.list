@@ -1,35 +1,24 @@
-## Boot / archiso (required for mkarchiso)
+# Packages installed onto disk by developer-os-install (pacstrap).
+# ISO-only packages (mkarchiso, syslinux, …) are omitted.
+
+## Boot / kernel
 amd-ucode
 intel-ucode
 mkinitcpio
-mkinitcpio-archiso
-squashfs-tools
-syslinux
-edk2-shell
-dosfstools
-mtools
-e2fsprogs
+linux
+linux-firmware
 grub
+efibootmgr
 systemd-resolvconf
 
 ## Core
 base
-linux
-linux-firmware
 sudo
 networkmanager
-
-## Install to disk (from live session)
-arch-install-scripts
-parted
-dosfstools
-efibootmgr
-rsync
 
 ## Hyprland / Wayland
 hyprland
 hyprpaper
-hyprlock
 waybar
 cpio
 cmake
@@ -47,7 +36,6 @@ polkit-gnome
 ## Development
 git
 base-devel
-vim
 
 ## Shell
 zsh
@@ -85,6 +73,11 @@ ttf-dejavu
 ttf-jetbrains-mono-nerd
 ttf-nerd-fonts-symbols-mono
 
-## Misc (small QoL)
+## Disk install
+parted
+dosfstools
+e2fsprogs
+
+## Misc
 less
 curl
