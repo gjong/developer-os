@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+if ! hyprpm list 2>/dev/null | grep -qF 'hyprwm'; then
+  echo "Installing hyprbars..."
+  hyprpm update 1>/dev/null 2>&1
+  printf 'y' | hyprpm add https://github.com/hyprwm/hyprland-plugins 1>/dev/null 2>&1
+  hyprpm enable hyprbars 1>/dev/null 2>&1
+  echo "hyprbars installed"
+fi

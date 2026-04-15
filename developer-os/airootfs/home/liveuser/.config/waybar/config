@@ -5,11 +5,10 @@
         "height": 24,
         "spacing": 5,
         "modules-left": [
-            "custom/launcher",
-            "hyprland/window"
+            "custom/launcher"
         ],
         "modules-center": [
-            "sway/window"
+            "hyprland/window"
         ],
         "modules-right": [
             "temperature",
@@ -21,30 +20,10 @@
             "tray",
             "clock"
         ],
-        "hyprland/window": {
-            "format": "{class}",
-            "max-length": 20,
-            "rewrite": {
-                "^(?!.*\\S).*": "Finder"
-            }
-        },
         "custom/launcher": {
-            "format": "🔍",
+            "format": "",
             "on-click": "rofi -show drun -show-icons -matching fuzzy -sort",
             "tooltip": false
-        },
-        "sway/mode": {
-            "format": "<span style=\"italic\">{}</span>"
-        },
-        "sway/scratchpad": {
-            "format": "{icon} {count}",
-            "show-empty": false,
-            "format-icons": [
-                "",
-                ""
-            ],
-            "tooltip": true,
-            "tooltip-format": "{app}: {title}"
         },
         "tray": {
             "spacing": 10
@@ -81,11 +60,11 @@
         },
         "network": {
             "format-wifi": "{essid} ({signalStrength}%) ",
-            "format-ethernet": " {ifname}",
-            "tooltip-format": " {ifname} via {gwaddr}",
-            "format-linked": " {ifname} (No IP)",
+            "format-ethernet": "󰈀 {ifname}",
+            "tooltip-format": "󰈀 {ifname} via {gwaddr}",
+            "format-linked": "󰈀 {ifname} (No IP)",
             "format-disconnected": "Disconnected ⚠ {ifname}",
-            "format-alt": " {ifname}: {ipaddr}/{cidr}"
+            "format-alt": "󰈀 {ifname}: {ipaddr}/{cidr}"
         },
         "pulseaudio": {
             "scroll-step": 5,
@@ -124,8 +103,8 @@
             "max-length": 50
         },
         "custom/os_button": {
-            "format": "🔍",
-            "on-click": "wofi --show drun",
+            "format": "",
+            "on-click": "rofi -show drun -show-icons -matching fuzzy -sort",
             "tooltip": false
         },
         "wlr/taskbar": {

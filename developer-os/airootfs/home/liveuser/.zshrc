@@ -3,8 +3,8 @@
 HISTFILE=~/.zsh_history
 HISTSIZE=5000
 SAVEHIST=5000
-setopt hist_ignore_dups share_history extended_glob prompt_subst
 
+setopt hist_ignore_dups share_history extended_glob prompt_subst
 autoload -Uz compinit && compinit -C
 
 # Plugins (Arch packages)
@@ -23,5 +23,12 @@ if command -v vfox >/dev/null 2>&1; then
   eval "$(vfox activate zsh)"
 fi
 
+plugins=(
+  git
+  gradle
+  java
+)
+
 alias ll='ls -lh'
 alias la='ls -lha'
+alias vi='vim'
