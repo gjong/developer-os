@@ -24,7 +24,7 @@ install_from_git() {
     rm -rf "${tmp}"
     return 1
   fi
-  (cd "${tmp}/MacTahoe-kde" && chmod +x install.sh && ./install.sh)
+  (cd "${tmp}/MacTahoe-kde" && chmod +x install.sh && ./install.sh -c dark)
 
   set +e
   git clone --depth 1 "${MAC_ICON_REPO}" "${tmp}/MacTahoe-icon-theme"

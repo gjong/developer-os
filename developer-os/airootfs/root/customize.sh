@@ -138,18 +138,17 @@ seed_mactahoe_liveuser_config() {
   install -d -m 0755 -o liveuser -g liveuser /home/liveuser/.config/Kvantum
   cat >/home/liveuser/.config/kdeglobals <<'EOF'
 [KDE]
-widgetStyle=kvantum
-LookAndFeelPackage=com.github.vinceliuice.MacTahoe-Light
+LookAndFeelPackage=com.github.vinceliuice.MacTahoe-Dark
 
 [General]
-ColorScheme=MacTahoeLight
+ColorScheme=MacTahoeDark
 
 [Icons]
-Theme=MacTahoe-light
+Theme=MacTahoe-dark
 EOF
   cat >/home/liveuser/.config/plasmarc <<'EOF'
 [Theme]
-name=MacTahoe-Light
+name=MacTahoe-Dark
 EOF
   cat >/home/liveuser/.config/kwinrc <<'EOF'
 [DesktopSwitcher]
@@ -162,15 +161,20 @@ LayoutName=org.kde.breeze.desktop
 ButtonsOnLeft=XAI
 ButtonsOnRight=
 library=org.kde.kwin.aurorae
-theme=__aurorae__svg__MacTahoe-Light
+theme=__aurorae__svg__MacTahoe-Dark
 EOF
   cat >/home/liveuser/.config/kcminputrc <<'EOF'
 [Mouse]
-cursorTheme=MacTahoe-light
+cursorTheme=MacTahoe-dark
 EOF
   cat >/home/liveuser/.config/Kvantum/kvantum.kvconfig <<'EOF'
 [General]
 theme=MacTahoe
+EOF
+  cat > /home/liveuser/.config/plasma-org.kde.plasma.desktop-appletsrc <<'EOF'
+[Containments][19][Wallpaper][org.kde.image][General]
+Image=file:///usr/share/wallpapers/wallpaper.png
+SlidePaths=/usr/share/wallpapers
 EOF
   chown liveuser:liveuser /home/liveuser/.config/kdeglobals \
     /home/liveuser/.config/plasmarc \
