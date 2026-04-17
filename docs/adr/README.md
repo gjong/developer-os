@@ -16,6 +16,7 @@ ADRs record **why** we made non-obvious choices. They complement the root `READM
 | [0008](0008-hyprbars-via-hyprpm.md) | Hyprbars via `hyprpm` at image build + `exec-once` reload | Accepted |
 | [0009](0009-vfox-binary-from-github.md) | vfox from pinned GitHub release + zsh `vfox activate` | Accepted |
 | [0010](0010-install-to-disk.md) | Guided `developer-os-install` + installer package list | Accepted |
+| [0011](0011-kde-plasma-wayland-session.md) | KDE Plasma (Wayland) via SDDM instead of Hyprland on TTY | Accepted |
 
 ## Creating a new ADR
 

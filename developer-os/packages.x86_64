@@ -26,23 +26,16 @@ dosfstools
 efibootmgr
 rsync
 
-## Hyprland / Wayland
-hyprland
-hyprpaper
-hyprlock
-waybar
-cpio
-cmake
-meson
-ninja
-glaze
-hyprland-protocols
-rofi-wayland
-kitty
-mako
-xdg-desktop-portal-hyprland
+## KDE Plasma (Wayland) + portals
+plasma-desktop
+plasma-nm
+sddm
+breeze-gtk
+kde-gtk-config
+kvantum
+xdg-desktop-portal-kde
 xdg-desktop-portal-gtk
-polkit-gnome
+kitty
 
 ## Development
 git
@@ -71,7 +64,6 @@ bluez-utils
 thunar
 thunar-volman
 gvfs
-firefox
 qt6-wayland
 libdecor
 grim

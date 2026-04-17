@@ -20,6 +20,6 @@ Version is pinned as **`VFOX_VERSION`** in `customize.sh`; bump when upgrading t
 
 **Positive:** Works in `pacstrap` without AUR helpers; checksum-verified; matches our x86_64 ISO only.
 
-**Negative / trade-offs:** Requires **network** during `mkarchiso` customize (same class as `hyprpm` / Flatpak). Other arches would need different tarball names.
+**Negative / trade-offs:** Requires **network** during `mkarchiso` customize (same class as Flatpak remote setup). Other arches would need different tarball names.
 
 **Follow-up:** If vfox enters `[extra]`, prefer `pacman -S vfox` and drop the script.

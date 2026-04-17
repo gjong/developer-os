@@ -79,6 +79,18 @@ mount "$ESP_PART" /mnt/boot
 echo "[4/7] pacstrap..."
 pacstrap -C "$PACMAN_CONF" /mnt "${PKGS[@]}"
 
+echo "[4b/7] MacTahoe KDE theme on target system..."
+cp -a /usr/local/bin/install-mactahoe-kde-theme.sh /mnt/usr/local/bin/
+chmod 0755 /mnt/usr/local/bin/install-mactahoe-kde-theme.sh
+set +e
+arch-chroot /mnt /usr/local/bin/install-mactahoe-kde-theme.sh
+_mt=$?
+set -e
+if ((_mt != 0)); then
+  echo "[developer-os-install] Theme git install failed (${_mt}); copying from live ISO if present..." >&2
+  /usr/local/bin/install-mactahoe-kde-theme.sh --rsync-from-live /mnt || true
+fi
+
 echo "[5/7] fstab..."
 genfstab -U /mnt >>/mnt/etc/fstab
 
@@ -105,6 +117,8 @@ set -euo pipefail
 bootctl install --esp-path=/boot --no-variables
 systemctl enable NetworkManager.service
 systemctl enable bluetooth.service
+systemctl enable sddm.service
+systemctl set-default graphical.target
 systemctl --global enable pipewire.socket pipewire-pulse.socket wireplumber.service 2>/dev/null || true
 
 install -d -m 0750 /etc/sudoers.d
@@ -120,11 +134,18 @@ flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flat
 CHROOT
 
 echo "[7/7] Copy profile helpers from live system..."
-install -d /mnt/usr/local/bin /mnt/usr/local/share/developer-os /mnt/usr/local/share/bash-completion/completions /mnt/usr/local/share/zsh/site-functions
+install -d /mnt/usr/local/bin /mnt/usr/local/share/developer-os /mnt/usr/local/share/bash-completion/completions /mnt/usr/local/share/zsh/site-functions /mnt/usr/share/applications
 [[ -x /usr/local/bin/vfox ]] && cp -a /usr/local/bin/vfox /mnt/usr/local/bin/
 [[ -f /usr/local/share/bash-completion/completions/vfox ]] && cp -a /usr/local/share/bash-completion/completions/vfox /mnt/usr/local/share/bash-completion/completions/ || true
 [[ -f /usr/local/share/zsh/site-functions/_vfox ]] && cp -a /usr/local/share/zsh/site-functions/_vfox /mnt/usr/local/share/zsh/site-functions/ || true
+if [[ -d /opt/jetbrains-toolbox ]]; then
+  install -d /mnt/opt
+  cp -a /opt/jetbrains-toolbox /mnt/opt/
+  ln -sf /opt/jetbrains-toolbox/bin/jetbrains-toolbox /mnt/usr/local/bin/jetbrains-toolbox
+  [[ -f /usr/share/applications/jetbrains-toolbox.desktop ]] && cp -a /usr/share/applications/jetbrains-toolbox.desktop /mnt/usr/share/applications/
+fi
 cp -a /usr/local/bin/developer-os-install /mnt/usr/local/bin/ 2>/dev/null || true
+cp -a /usr/local/bin/install-mactahoe-kde-theme.sh /mnt/usr/local/bin/ 2>/dev/null || true
 cp -a /usr/local/share/developer-os/installer-packages.list /mnt/usr/local/share/developer-os/
 
 if [[ -d /home/liveuser/.config ]]; then
@@ -139,4 +160,4 @@ fi
 echo
 echo "Installed Developer OS on ${ROOT_PART} (EFI ${ESP_PART}). User: ${IN_USER}"
 echo "Run: umount -R /mnt && reboot"
-echo "Hyprland plugin (hyprbars): after first boot with network, run: hyprpm update && hyprpm reload"
+echo "Desktop: log in at SDDM (Plasma Wayland is the default session)."

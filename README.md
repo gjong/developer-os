@@ -1,15 +1,15 @@
 # developer-os — custom Arch Linux live image
 
-Reproducible **archiso** profile with **Hyprland**, development tooling, **Flatpak** (Flathub), and a preconfigured **liveuser** session.
+Reproducible **archiso** profile with **KDE Plasma (Wayland)** via **SDDM**, development tooling, **Flatpak** (Flathub), and a preconfigured **liveuser** session.
 
 **Project docs:** [Documentation index](./docs/README.md) · [ADRs (decisions)](./docs/adr/README.md) · [How to extend docs](./docs/contributing.md)
 
 ## What you get
 
 - **Boot**: BIOS (SYSLINUX) + UEFI (**systemd-boot**), matching upstream archiso releng layout.
-- **Desktop**: Hyprland, Waybar, Rofi (Wayland), Mako, Kitty, Polkit GNOME agent.
+- **Desktop**: Plasma (Wayland session), SDDM, NetworkManager applet (`plasma-nm`), Kitty, GTK/Qt portal stack (`xdg-desktop-portal-kde` + `-gtk`), **Kvantum**, and the **[MacTahoe-kde](https://github.com/vinceliuice/MacTahoe-kde)** look-and-feel (plus **[MacTahoe-icon-theme](https://github.com/vinceliuice/MacTahoe-icon-theme)** for icons/cursors) installed system-wide when **git** can reach GitHub during the ISO build or disk install; otherwise the installer tries to copy theme files from the live medium.
 - **Apps**: Thunar, Firefox, screenshot tools (`grim` / `slurp`), `wl-clipboard`.
-- **Dev**: Git, `base-devel`, **vfox** (pinned GitHub release → `/usr/local/bin`; see [ADR-0009](./docs/adr/0009-vfox-binary-from-github.md)).
+- **Dev**: Git, `base-devel`, **vfox** (pinned GitHub release → `/usr/local/bin`; see [ADR-0009](./docs/adr/0009-vfox-binary-from-github.md)), **JetBrains Toolbox** (pinned official Linux tarball → `/opt/jetbrains-toolbox`, menu entry; see [Toolbox App](https://www.jetbrains.com/toolbox-app/)).
 - **Shell**: Zsh + Starship + autosuggestions + syntax highlighting (from distro packages).
 - **Audio / BT**: PipeWire + WirePlumber, Bluetooth stack.
 - **Flatpak**: `flathub` remote added at image build time.
@@ -75,13 +75,12 @@ Requirements: **UEFI** firmware (this installer does not set up BIOS boot).
 4. Confirm with **`YES`** when prompted (the disk is erased).
 5. When finished: **`sudo umount -R /mnt`**, reboot, and remove the USB stick.
 
-The installed system receives the same Hyprland/dotfile layout as **`liveuser`** (copied into the new home), **`vfox`** if it was present on the ISO, and **Flathub**. **`hyprland.conf`** already contains **`exec-once = hyprpm reload`**; after install, run **`hyprpm update`** once with network so the hyprbars plugin matches the on-disk Hyprland version.
+The installed system receives the same **`liveuser`** dotfiles under **`.config`** (and shell rc files when present), **`vfox`** if it was on the ISO, and **Flathub**. **SDDM** is enabled with **`graphical.target`**; log in at the greeter (Plasma Wayland is the default session). See [ADR-0011](./docs/adr/0011-kde-plasma-wayland-session.md).
 
 ## Live session
 
 - User **`liveuser`** (empty password, **sudo** via `wheel`).
-- **TTY1** auto-login starts a zsh login shell; `~/.zprofile` runs **`Hyprland`** when on `/dev/tty1`.
-- Keybinds: **Super+Enter** terminal, **Super+D** launcher, **Super+Q** close window.
+- **SDDM** auto-logs **`liveuser`** into **Plasma (Wayland)** on boot (see **`airootfs/etc/sddm.conf.d/autologin.conf`**). Use the panel application launcher or **KRunner** (default shortcut is often **Meta** / Super).
 
 ## Reproducibility
 
@@ -98,7 +97,7 @@ Rationale: [ADR-0002](./docs/adr/0002-ci-archlinux-container.md), [ADR-0006](./d
 
 - **ISO unchanged after editing `airootfs/` or packages:** `mkarchiso` reuses `developer-os/work/` until you remove it; see [Rebuilding when you change the profile](#rebuilding-when-you-change-the-profile).
 - **`invalid group liveuser` during build:** `customize.sh` creates the `liveuser` group before `chown`; see [ADR-0004](./docs/adr/0004-liveuser-and-customize-hook.md).
-- **Hyprland warnings (`gestures:workspace_swipe`, `windowrulev2` deprecated):** live config uses current `gesture =` and `windowrule` syntax; see [ADR-0007](./docs/adr/0007-hyprland-gesture-windowrule-syntax.md).
-- **Hyprbars / title bars missing:** hyprbars is a plugin; the image runs **`hyprpm`** during `customize.sh` to build it and **`exec-once = hyprpm reload`** to load it. If the build step failed (no network in chroot, ABI mismatch), check the mkarchiso log; see [ADR-0008](./docs/adr/0008-hyprbars-via-hyprpm.md).
+- **Black screen or SDDM loop:** confirm **`plasma-desktop`** is installed and try another session from the SDDM session menu. On current Arch Plasma, the Wayland session file is **`plasma.desktop`** under **`/usr/share/wayland-sessions/`** (see [ADR-0011](./docs/adr/0011-kde-plasma-wayland-session.md)).
+- **MacTahoe missing or partial:** the theme is cloned during **`mkarchiso`** and during **`developer-os-install`** (needs **network**). Offline installs fall back to copying **`/usr/share/...`** from the live session if the ISO was built with the theme present. See [MacTahoe-kde](https://github.com/vinceliuice/MacTahoe-kde).
 - **`vfox` missing:** installed from a **pinned GitHub release** in `customize.sh` (needs network). After boot, `vfox` is on `PATH`; zsh runs `eval "$(vfox activate zsh)"`. See [ADR-0009](./docs/adr/0009-vfox-binary-from-github.md).
 - **Install script fails at `pacstrap`:** ensure mirrors work (`reflector` is not included by default); use `pacman -Sy` on the live system first or edit `pacman.conf` / mirrorlist.

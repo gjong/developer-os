@@ -15,7 +15,7 @@ Official **archinstall** is interactive and opinionated; a small **guided script
 1. Ship **`arch-install-scripts`**, **`parted`**, **`dosfstools`**, **`efibootmgr`**, and **`rsync`** on the ISO.
 2. Maintain **`/usr/local/share/developer-os/installer-packages.list`**: same stack as the live image minus **ISO-only** packages (`mkinitcpio-archiso`, `syslinux`, `edk2-shell`, `mtools`, `squashfs-tools`, `e2fsprogs` for ISO layout — `e2fsprogs` stays on disk for ext4 tools; actually we have mkinitcpio for initramfs on installed system - good).
 3. Provide **`/usr/local/bin/developer-os-install`** (root): **UEFI + GPT** only, **550 MiB ESP** + **ext4 root**, **`systemd-boot`**, **`pacstrap`** from the list, **`genfstab`**, enable **NetworkManager** / bluetooth / PipeWire user units, **wheel sudo**, create **`developer`** user (or chosen name) with **password**, **Flathub** remote, copy **`vfox`** binary + completions from live if present, **rsync** `liveuser` dotfiles (`.config`, `.zshrc`, `.zprofile`) to the new user excluding `.cache`.
-4. Document in **README**: run **`sudo developer-os-install`**, requirements (**UEFI**), and that **hyprbars** must be rebuilt on first boot with network (`hyprpm`).
+4. Document in **README**: run **`sudo developer-os-install`**, requirements (**UEFI**), and that the installed system uses **SDDM** with **Plasma Wayland** (see [ADR-0011](0011-kde-plasma-wayland-session.md)).
 
 ## Consequences
 

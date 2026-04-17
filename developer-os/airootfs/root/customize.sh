@@ -29,14 +29,8 @@ chmod 0440 /etc/sudoers.d/10-wheel
 systemctl enable NetworkManager.service
 systemctl enable bluetooth.service
 systemctl --global enable pipewire.socket pipewire-pulse.socket wireplumber.service
-
-# --- Optional: autologin on tty1 as liveuser ---
-install -d -m 0755 /etc/systemd/system/getty@tty1.service.d
-cat >/etc/systemd/system/getty@tty1.service.d/autologin.conf <<'EOF'
-[Service]
-ExecStart=
-ExecStart=-/usr/bin/agetty --autologin liveuser --noclear %I $TERM
-EOF
+systemctl enable sddm.service
+systemctl set-default graphical.target
 
 # --- Flatpak + Flathub (system remote) ---
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
@@ -78,37 +72,110 @@ else
   echo "[customize.sh] WARNING: curl missing; skipping vfox install." >&2
 fi
 
-# --- Hyprbars: hyprland-plugins via hyprpm as liveuser (ADR-0008; needs network during mkarchiso) ---
-# hyprpm requires XDG_RUNTIME_DIR even in chroot; without it it exits immediately.
-if command -v hyprpm &>/dev/null; then
-  HYPRPM_RUNTIME="/tmp/mkarchiso-hyprpm-liveuser"
-  install -d -m 0700 -o liveuser -g liveuser "${HYPRPM_RUNTIME}"
-  _hyprpm() { runuser -u liveuser -- env HOME=/home/liveuser USER=liveuser LOGNAME=liveuser XDG_RUNTIME_DIR="${HYPRPM_RUNTIME}" "$@"; }
+# --- JetBrains Toolbox App (https://www.jetbrains.com/toolbox-app/) ---
+# Pin build here; bump using: https://data.services.jetbrains.com/products/releases?code=TBA&latest=true&type=release&platform=linux
+TOOLBOX_BUILD="3.4.3.81140"
+TOOLBOX_TAR="jetbrains-toolbox-${TOOLBOX_BUILD}.tar.gz"
+TOOLBOX_BASE="https://download.jetbrains.com/toolbox"
+install_jetbrains_toolbox() {
+  local tmp
+  tmp="$(mktemp -d)"
+  # shellcheck disable=SC2064
+  trap "rm -rf '${tmp}'" EXIT
+  curl -fsSL "${TOOLBOX_BASE}/${TOOLBOX_TAR}" -o "${tmp}/${TOOLBOX_TAR}"
+  curl -fsSL "${TOOLBOX_BASE}/${TOOLBOX_TAR}.sha256" -o "${tmp}/${TOOLBOX_TAR}.sha256"
+  (cd "${tmp}" && sha256sum -c "${TOOLBOX_TAR}.sha256")
+  tar -xzf "${tmp}/${TOOLBOX_TAR}" -C "${tmp}"
+  rm -rf /opt/jetbrains-toolbox
+  mv "${tmp}/jetbrains-toolbox-${TOOLBOX_BUILD}" /opt/jetbrains-toolbox
+  ln -sf /opt/jetbrains-toolbox/bin/jetbrains-toolbox /usr/local/bin/jetbrains-toolbox
+  install -d /usr/share/applications
+  cat >/usr/share/applications/jetbrains-toolbox.desktop <<'EOF'
+[Desktop Entry]
+Type=Application
+Name=JetBrains Toolbox
+Comment=Install and manage JetBrains IDEs (jetbrains.com/toolbox-app)
+Exec=/opt/jetbrains-toolbox/bin/jetbrains-toolbox %u
+Icon=jetbrains-toolbox
+StartupNotify=true
+Terminal=false
+Categories=Development;Utility;
+MimeType=
+EOF
+  chmod 0755 /opt/jetbrains-toolbox/bin/jetbrains-toolbox
+  trap - EXIT
+  rm -rf "${tmp}"
+}
+if command -v curl &>/dev/null; then
   set +e
-  _hyprpm hyprpm update
-  _st=$?
+  install_jetbrains_toolbox
+  _tb=$?
   set -e
-  if (( _st != 0 )); then
-    echo "[customize.sh] WARNING: hyprpm update failed (${_st}); hyprbars not baked (no network or missing deps)." >&2
+  if ((_tb != 0)); then
+    echo "[customize.sh] WARNING: JetBrains Toolbox install failed (${_tb}); need network during ISO build." >&2
   else
-    if ! _hyprpm sh -c 'hyprpm list 2>/dev/null | grep -qi hyprbars'; then
-      set +e
-      printf 'y\n' | _hyprpm hyprpm add https://github.com/hyprwm/hyprland-plugins
-      _add=$?
-      set -e
-      if (( _add != 0 )); then
-        echo "[customize.sh] WARNING: hyprpm add hyprland-plugins failed (${_add})." >&2
-      fi
-    fi
-    _hyprpm hyprpm enable hyprbars 2>/dev/null || true
-    set +e
-    _hyprpm hyprpm update
-    _st2=$?
-    set -e
-    if (( _st2 != 0 )); then
-      echo "[customize.sh] WARNING: hyprpm plugin build failed (${_st2}); check mkarchiso log." >&2
-    else
-      echo "[customize.sh] hyprbars baked for liveuser (hyprpm)."
-    fi
+    echo "[customize.sh] JetBrains Toolbox ${TOOLBOX_BUILD} installed under /opt/jetbrains-toolbox"
+  fi
+else
+  echo "[customize.sh] WARNING: curl missing; skipping JetBrains Toolbox install." >&2
+fi
+
+# --- MacTahoe KDE theme (Plasma look-and-feel + Kvantum + icons; needs network during mkarchiso) ---
+seed_mactahoe_liveuser_config() {
+  install -d -m 0755 -o liveuser -g liveuser /home/liveuser/.config/Kvantum
+  cat >/home/liveuser/.config/kdeglobals <<'EOF'
+[KDE]
+widgetStyle=kvantum
+LookAndFeelPackage=com.github.vinceliuice.MacTahoe-Light
+
+[General]
+ColorScheme=MacTahoeLight
+
+[Icons]
+Theme=MacTahoe-light
+EOF
+  cat >/home/liveuser/.config/plasmarc <<'EOF'
+[Theme]
+name=MacTahoe-Light
+EOF
+  cat >/home/liveuser/.config/kwinrc <<'EOF'
+[DesktopSwitcher]
+LayoutName=org.kde.breeze.desktop
+
+[WindowSwitcher]
+LayoutName=org.kde.breeze.desktop
+
+[org.kde.kdecoration2]
+ButtonsOnLeft=XAI
+ButtonsOnRight=
+library=org.kde.kwin.aurorae
+theme=__aurorae__svg__MacTahoe-Light
+EOF
+  cat >/home/liveuser/.config/kcminputrc <<'EOF'
+[Mouse]
+cursorTheme=MacTahoe-light
+EOF
+  cat >/home/liveuser/.config/Kvantum/kvantum.kvconfig <<'EOF'
+[General]
+theme=MacTahoe
+EOF
+  chown liveuser:liveuser /home/liveuser/.config/kdeglobals \
+    /home/liveuser/.config/plasmarc \
+    /home/liveuser/.config/kwinrc \
+    /home/liveuser/.config/kcminputrc \
+    /home/liveuser/.config/Kvantum/kvantum.kvconfig
+}
+
+if [[ -x /usr/local/bin/install-mactahoe-kde-theme.sh ]]; then
+  set +e
+  /usr/local/bin/install-mactahoe-kde-theme.sh
+  _mt=$?
+  set -e
+  if ((_mt != 0)); then
+    echo "[customize.sh] WARNING: MacTahoe theme install failed (${_mt}); need git + network during ISO build." >&2
+  elif [[ -d /usr/share/plasma/look-and-feel/com.github.vinceliuice.MacTahoe-Light ]]; then
+    seed_mactahoe_liveuser_config
+    chown -R liveuser:liveuser /home/liveuser
+    echo "[customize.sh] MacTahoe theme applied; liveuser Plasma defaults seeded."
   fi
 fi
