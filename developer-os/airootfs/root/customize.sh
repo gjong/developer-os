@@ -35,6 +35,19 @@ systemctl set-default graphical.target
 # --- Flatpak + Flathub (system remote) ---
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
+# --- Brave Browser (Flathub: com.brave.Browser; needs network during mkarchiso) ---
+if command -v flatpak &>/dev/null; then
+  set +e
+  flatpak install -y --system flathub com.brave.Browser
+  _brave=$?
+  set -e
+  if ((_brave != 0)); then
+    echo "[customize.sh] WARNING: Brave Flatpak install failed (${_brave}); need network during ISO build." >&2
+  else
+    echo "[customize.sh] Brave Browser installed from Flathub (com.brave.Browser)."
+  fi
+fi
+
 # --- vfox (version-fox): not in Arch [extra]; install official GitHub release (x86_64) ---
 # Pin version here; bump when upgrading the live image.
 VFOX_VERSION="1.0.8"

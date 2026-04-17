@@ -8,7 +8,7 @@ Reproducible **archiso** profile with **KDE Plasma (Wayland)** via **SDDM**, dev
 
 - **Boot**: BIOS (SYSLINUX) + UEFI (**systemd-boot**), matching upstream archiso releng layout.
 - **Desktop**: Plasma (Wayland session), SDDM, NetworkManager applet (`plasma-nm`), Kitty, GTK/Qt portal stack (`xdg-desktop-portal-kde` + `-gtk`), **Kvantum**, and the **[MacTahoe-kde](https://github.com/vinceliuice/MacTahoe-kde)** look-and-feel (plus **[MacTahoe-icon-theme](https://github.com/vinceliuice/MacTahoe-icon-theme)** for icons/cursors) installed system-wide when **git** can reach GitHub during the ISO build or disk install; otherwise the installer tries to copy theme files from the live medium.
-- **Apps**: Thunar, Firefox, screenshot tools (`grim` / `slurp`), `wl-clipboard`.
+- **Apps**: Thunar, Firefox, **Brave** (Flatpak from [Flathub](https://flathub.org/apps/com.brave.Browser)), screenshot tools (`grim` / `slurp`), `wl-clipboard`.
 - **Dev**: Git, `base-devel`, **vfox** (pinned GitHub release → `/usr/local/bin`; see [ADR-0009](./docs/adr/0009-vfox-binary-from-github.md)), **JetBrains Toolbox** (pinned official Linux tarball → `/opt/jetbrains-toolbox`, menu entry; see [Toolbox App](https://www.jetbrains.com/toolbox-app/)).
 - **Shell**: Zsh + Starship + autosuggestions + syntax highlighting (from distro packages).
 - **Audio / BT**: PipeWire + WirePlumber, Bluetooth stack.

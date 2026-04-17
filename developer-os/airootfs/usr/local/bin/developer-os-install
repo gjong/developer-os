@@ -131,6 +131,13 @@ fi
 printf '%s\n' "${IN_USER}:${PW1}" | chpasswd
 
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo 2>/dev/null || true
+set +e
+flatpak install -y --system flathub com.brave.Browser
+_brave_fp=$?
+set -e
+if ((_brave_fp != 0)); then
+  echo "[developer-os-install] WARNING: Brave Flatpak install failed (${_brave_fp}); run after boot: flatpak install -y flathub com.brave.Browser" >&2
+fi
 CHROOT
 
 echo "[7/7] Copy profile helpers from live system..."
