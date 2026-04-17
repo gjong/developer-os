@@ -28,4 +28,5 @@ file_permissions=(
   ["/usr/local/bin/install-mactahoe-kde-theme.sh"]="0:0:755"
   ["/usr/local/share/developer-os/install-extras.sh"]="0:0:755"
   ["/usr/local/share/developer-os/seed-plasma-mactahoe.sh"]="0:0:755"
+  ["/usr/local/share/developer-os/sync-etc-skel-from-home.sh"]="0:0:755"
 )

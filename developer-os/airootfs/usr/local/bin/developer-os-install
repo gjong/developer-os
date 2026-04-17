@@ -90,6 +90,8 @@ cp -a /usr/local/bin/install-mactahoe-kde-theme.sh /mnt/usr/local/bin/
 chmod 0755 /mnt/usr/local/bin/install-mactahoe-kde-theme.sh
 cp -a /usr/local/share/developer-os/seed-plasma-mactahoe.sh /mnt/usr/local/share/developer-os/
 chmod 0755 /mnt/usr/local/share/developer-os/seed-plasma-mactahoe.sh
+cp -a /usr/local/share/developer-os/sync-etc-skel-from-home.sh /mnt/usr/local/share/developer-os/
+chmod 0755 /mnt/usr/local/share/developer-os/sync-etc-skel-from-home.sh
 set +e
 arch-chroot /mnt /usr/local/share/developer-os/install-extras.sh
 _ex=$?
@@ -187,6 +189,11 @@ if [[ -d "/mnt/home/${IN_USER}" && -x /mnt/usr/local/share/developer-os/seed-pla
     echo "[developer-os-install] WARNING: seed-plasma-mactahoe.sh exited ${_seed}." >&2
   fi
   arch-chroot /mnt chown -R "${IN_USER}:${IN_USER}" "/home/${IN_USER}" 2>/dev/null || true
+fi
+
+# New users on the installed system match the first account (same as live ISO behavior).
+if [[ -d "/mnt/home/${IN_USER}" && -x /usr/local/share/developer-os/sync-etc-skel-from-home.sh ]]; then
+  /usr/local/share/developer-os/sync-etc-skel-from-home.sh "/mnt/home/${IN_USER}" /mnt
 fi
 
 echo

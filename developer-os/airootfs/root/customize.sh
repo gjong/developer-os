@@ -53,3 +53,11 @@ if [[ -x /usr/local/share/developer-os/seed-plasma-mactahoe.sh ]]; then
 else
   echo "[customize.sh] WARNING: seed-plasma-mactahoe.sh missing." >&2
 fi
+
+# --- New users: same dotfiles + Plasma as liveuser (useradd -m copies /etc/skel) ---
+if [[ -x /usr/local/share/developer-os/sync-etc-skel-from-home.sh ]]; then
+  /usr/local/share/developer-os/sync-etc-skel-from-home.sh /home/liveuser /
+  echo "[customize.sh] /etc/skel synced from liveuser."
+else
+  echo "[customize.sh] WARNING: sync-etc-skel-from-home.sh missing." >&2
+fi
