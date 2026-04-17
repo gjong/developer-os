@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# First TTY login (see /etc/profile.d): sync hyprpm headers + hyprbars if missing or stale.
+# Primary install is customize.sh at ISO build; this is a fallback when the bake step was skipped.
+
+set -euo pipefail
+
+command -v hyprpm &>/dev/null || exit 0
+
+# hyprpm refuses to run without XDG_RUNTIME_DIR (see Hyprland hyprpm getTempRoot).
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
+if [[ ! -d "${XDG_RUNTIME_DIR}" || ! -w "${XDG_RUNTIME_DIR}" ]]; then
+  export XDG_RUNTIME_DIR="${TMPDIR:-/tmp}/hyprpm-runtime-${USER:-user}-$$"
+  mkdir -p "${XDG_RUNTIME_DIR}"
+  chmod 700 "${XDG_RUNTIME_DIR}"
+fi
+
+log() { echo "[prepare-desktop] $*" >&2; }
+
+# Refresh Hyprland headers + rebuild plugins when needed (fast if already up to date).
+if ! hyprpm update; then
+  log "hyprpm update failed (network or deps); hyprbars may not load until build succeeds."
+  exit 0
+fi
+
+if ! hyprpm list 2>/dev/null | grep -qi hyprbars; then
+  log "Installing hyprland-plugins (hyprbars)…"
+  if ! printf 'y\n' | hyprpm add https://github.com/hyprwm/hyprland-plugins; then
+    log "hyprpm add failed."
+    exit 0
+  fi
+fi
+
+hyprpm enable hyprbars 2>/dev/null || true
+
+if ! hyprpm update; then
+  log "hyprpm update (plugin build) failed."
+  exit 0
+fi
+
+log "hyprpm state ready (hyprbars enabled)."

@@ -78,29 +78,37 @@ else
   echo "[customize.sh] WARNING: curl missing; skipping vfox install." >&2
 fi
 
-# --- Hyprbars: Hyprland plugin from hyprland-plugins (not a pacman package; hyprpm + exec-once reload) ---
-# Runs as liveuser so state is under /home/liveuser/.local/share/hyprpm. Needs git + network during mkarchiso.
+# --- Hyprbars: hyprland-plugins via hyprpm as liveuser (ADR-0008; needs network during mkarchiso) ---
+# hyprpm requires XDG_RUNTIME_DIR even in chroot; without it it exits immediately.
 if command -v hyprpm &>/dev/null; then
-  _hyprpm() { runuser -u liveuser -- env HOME=/home/liveuser USER=liveuser LOGNAME=liveuser "$@"; }
+  HYPRPM_RUNTIME="/tmp/mkarchiso-hyprpm-liveuser"
+  install -d -m 0700 -o liveuser -g liveuser "${HYPRPM_RUNTIME}"
+  _hyprpm() { runuser -u liveuser -- env HOME=/home/liveuser USER=liveuser LOGNAME=liveuser XDG_RUNTIME_DIR="${HYPRPM_RUNTIME}" "$@"; }
   set +e
   _hyprpm hyprpm update
   _st=$?
   set -e
   if (( _st != 0 )); then
-    echo "[customize.sh] WARNING: hyprpm update failed (${_st}); hyprbars skipped (no network or headers mismatch)." >&2
+    echo "[customize.sh] WARNING: hyprpm update failed (${_st}); hyprbars not baked (no network or missing deps)." >&2
   else
-    set +e
-    _hyprpm hyprpm add https://github.com/hyprwm/hyprland-plugins
-    set -e
-    _hyprpm hyprpm enable hyprbars
+    if ! _hyprpm sh -c 'hyprpm list 2>/dev/null | grep -qi hyprbars'; then
+      set +e
+      printf 'y\n' | _hyprpm hyprpm add https://github.com/hyprwm/hyprland-plugins
+      _add=$?
+      set -e
+      if (( _add != 0 )); then
+        echo "[customize.sh] WARNING: hyprpm add hyprland-plugins failed (${_add})." >&2
+      fi
+    fi
+    _hyprpm hyprpm enable hyprbars 2>/dev/null || true
     set +e
     _hyprpm hyprpm update
     _st2=$?
     set -e
     if (( _st2 != 0 )); then
-      echo "[customize.sh] WARNING: hyprpm plugin build failed (${_st2}); check build log for hyprbars." >&2
+      echo "[customize.sh] WARNING: hyprpm plugin build failed (${_st2}); check mkarchiso log." >&2
     else
-      echo "[customize.sh] hyprbars plugin installed for liveuser (hyprpm)."
+      echo "[customize.sh] hyprbars baked for liveuser (hyprpm)."
     fi
   fi
 fi

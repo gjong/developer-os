@@ -22,8 +22,8 @@ networkmanager
 ## Hyprland / Wayland
 hyprland
 hyprpaper
+hyprlock
 waybar
-## hyprpm (compile hyprbars at image build; Hyprland optdepends + wiki deps)
 cpio
 cmake
 meson
@@ -40,6 +40,7 @@ polkit-gnome
 ## Development
 git
 base-devel
+vim
 
 ## Shell
 zsh
