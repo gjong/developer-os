@@ -21,6 +21,7 @@ networkmanager
 
 ## Install to disk (from live session)
 arch-install-scripts
+archinstall
 parted
 dosfstools
 efibootmgr
@@ -28,6 +29,7 @@ rsync
 
 ## KDE Plasma (Wayland) + portals
 plasma-desktop
+plasma-workspace-wallpapers
 plasma-nm
 sddm
 breeze-gtk

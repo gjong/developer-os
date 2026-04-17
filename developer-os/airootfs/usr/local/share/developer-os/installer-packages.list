@@ -1,7 +1,8 @@
 # Packages installed onto disk by developer-os-install (pacstrap).
-# ISO-only packages (mkarchiso, syslinux, …) are omitted.
+# Keep in sync with developer-os/packages.x86_64: same user-facing set, minus ISO-only tools
+# (mkinitcpio-archiso, squashfs-tools, syslinux, edk2-shell, mtools).
 
-## Boot / kernel
+## Boot / kernel / initramfs
 amd-ucode
 intel-ucode
 mkinitcpio
@@ -16,8 +17,16 @@ base
 sudo
 networkmanager
 
+## Same installer stack as the live image
+arch-install-scripts
+archinstall
+parted
+dosfstools
+rsync
+
 ## KDE Plasma (Wayland) + portals
 plasma-desktop
+plasma-workspace-wallpapers
 plasma-nm
 sddm
 breeze-gtk
@@ -30,6 +39,7 @@ kitty
 ## Development
 git
 base-devel
+vim
 
 ## Shell
 zsh
@@ -66,9 +76,7 @@ ttf-dejavu
 ttf-jetbrains-mono-nerd
 ttf-nerd-fonts-symbols-mono
 
-## Disk install
-parted
-dosfstools
+## Filesystems (root is ext4; ESP is FAT)
 e2fsprogs
 
 ## Misc

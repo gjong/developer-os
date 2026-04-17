@@ -26,4 +26,6 @@ file_permissions=(
   ["/usr/local/bin/livecd-sound"]="0:0:755"
   ["/usr/local/bin/developer-os-install"]="0:0:755"
   ["/usr/local/bin/install-mactahoe-kde-theme.sh"]="0:0:755"
+  ["/usr/local/share/developer-os/install-extras.sh"]="0:0:755"
+  ["/usr/local/share/developer-os/seed-plasma-mactahoe.sh"]="0:0:755"
 )

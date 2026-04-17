@@ -13,7 +13,7 @@ Reproducible **archiso** profile with **KDE Plasma (Wayland)** via **SDDM**, dev
 - **Shell**: Zsh + Starship + autosuggestions + syntax highlighting (from distro packages).
 - **Audio / BT**: PipeWire + WirePlumber, Bluetooth stack.
 - **Flatpak**: `flathub` remote added at image build time.
-- **Install to disk**: run **`sudo developer-os-install`** from the live session (UEFI, wipes target disk). See [Install to disk](#install-to-disk) and [ADR-0010](./docs/adr/0010-install-to-disk.md).
+- **Install to disk**: run **`sudo developer-os-install`** and pick **quick install (1)**, **`archinstall` (2)**, or the **wiki guide (3)**. The quick path is UEFI and wipes the target disk. See [Install to disk](#install-to-disk) and [ADR-0010](./docs/adr/0010-install-to-disk.md).
 
 ## Layout
 
@@ -44,17 +44,7 @@ ISOs appear under `developer-os/out/`. The build uses a working directory under 
 Privileged container recommended (mkarchiso uses mounts / loop devices):
 
 ```bash
-cd developer-os
-docker run --rm --privileged \
-  -e SOURCE_DATE_EPOCH="$(git log -1 --format=%ct 2>/dev/null || date +%s)" \
-  -v "$PWD:/profile" -w /profile \
-  archlinux:latest bash -lc '
-    set -euo pipefail
-    pacman-key --init
-    pacman-key --populate archlinux
-    pacman -Sy --needed --noconfirm archiso arch-install-scripts sudo
-    ./build.sh
-  '
+sh ./build-iso.sh
 ```
 
 ## Locally running the ISO in Qemu
@@ -67,13 +57,14 @@ qemu-system-x86_64.exe -m 4086 -accel whpx -smp cores=6 -M pc -device ich9-usb-e
 
 ## Install to disk
 
-Requirements: **UEFI** firmware (this installer does not set up BIOS boot).
+**Quick install (menu option 1)** requires **UEFI** firmware (that path does not set up BIOS boot). **`archinstall`** (option 2) supports the usual Arch choices, including BIOS setups, depending on what you configure there.
 
 1. Boot the ISO and connect to the network (same as live use).
 2. Run **`sudo developer-os-install`**.
-3. Enter the target whole disk (e.g. `/dev/nvme0n1`), a username (default **`developer`**), and a **password** for that account.
-4. Confirm with **`YES`** when prompted (the disk is erased).
-5. When finished: **`sudo umount -R /mnt`**, reboot, and remove the USB stick.
+3. At the menu, choose **`1`** for the Developer OS quick install (or **`2`** for official **`archinstall`**, **`3`** to open the [Installation guide](https://wiki.archlinux.org/title/Installation_guide) in a browser when a graphical session is available).
+4. For **quick install**: enter the target whole disk (e.g. `/dev/nvme0n1`), a username (default **`developer`**), and a **password** for that account.
+5. Confirm with **`YES`** when prompted (the disk is erased).
+6. When finished: **`sudo umount -R /mnt`**, reboot, and remove the USB stick.
 
 The installed system receives the same **`liveuser`** dotfiles under **`.config`** (and shell rc files when present), **`vfox`** if it was on the ISO, and **Flathub**. **SDDM** is enabled with **`graphical.target`**; log in at the greeter (Plasma Wayland is the default session). See [ADR-0011](./docs/adr/0011-kde-plasma-wayland-session.md).
 

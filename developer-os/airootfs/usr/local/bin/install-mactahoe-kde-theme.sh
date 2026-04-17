@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Install MacTahoe-kde + MacTahoe-icon-theme (vinceliuice GitHub) system-wide under /usr/share.
-# Used from mkarchiso customize (chroot) and from developer-os-install (target root).
+# Used from install-extras.sh (live + disk), developer-os-install, and mkarchiso customize (via install-extras).
 # With --rsync-from-live DEST: copy theme trees from this system's /usr into DEST (e.g. /mnt) when git is unavailable.
 
 set -euo pipefail
@@ -84,8 +84,9 @@ rsync_from_live() {
   done
 
   shopt -u nullglob
-  if [[ ! -d "${dest}/usr/share/plasma/look-and-feel/com.github.vinceliuice.MacTahoe-Light" ]]; then
-    echo "[install-mactahoe-kde-theme] ERROR: --rsync-from-live found no MacTahoe files on the live system." >&2
+  if [[ ! -d "${dest}/usr/share/plasma/look-and-feel/com.github.vinceliuice.MacTahoe-Light" \
+        && ! -d "${dest}/usr/share/plasma/look-and-feel/com.github.vinceliuice.MacTahoe-Dark" ]]; then
+    echo "[install-mactahoe-kde-theme] ERROR: --rsync-from-live found no MacTahoe look-and-feel on the live system." >&2
     return 1
   fi
   echo "[install-mactahoe-kde-theme] Copied MacTahoe theme from live medium into ${dest}."
