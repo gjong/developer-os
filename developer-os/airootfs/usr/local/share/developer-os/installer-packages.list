@@ -1,0 +1,90 @@
+# Packages installed onto disk by developer-os-install (pacstrap).
+# Keep in sync with developer-os/packages.x86_64: same user-facing set, minus ISO-only tools
+# (mkinitcpio-archiso, squashfs-tools, syslinux, edk2-shell, mtools).
+
+## Boot / kernel / initramfs
+amd-ucode
+intel-ucode
+mkinitcpio
+linux
+linux-firmware
+grub
+efibootmgr
+systemd-resolvconf
+
+## Core
+base
+sudo
+networkmanager
+
+## Same installer stack as the live image
+arch-install-scripts
+archinstall
+parted
+dosfstools
+rsync
+
+## KDE Plasma (Wayland) + portals
+plasma-desktop
+plasma-workspace-wallpapers
+plasma-nm
+sddm
+breeze-gtk
+kde-gtk-config
+kvantum
+xdg-desktop-portal-kde
+xdg-desktop-portal-gtk
+kdialog
+qt6-declarative
+kitty
+
+## Development
+git
+github-cli
+base-devel
+vim
+docker
+docker-buildx
+docker-compose
+
+## Shell
+zsh
+starship
+zsh-autosuggestions
+zsh-syntax-highlighting
+
+## Flatpak
+flatpak
+
+## Audio / Bluetooth
+pipewire
+pipewire-pulse
+pipewire-alsa
+wireplumber
+pavucontrol
+bluez
+bluez-utils
+
+## Desktop apps / utilities
+thunar
+thunar-volman
+gvfs
+qt6-wayland
+libdecor
+grim
+slurp
+wl-clipboard
+xdg-utils
+
+## Fonts / console
+terminus-font
+ttf-dejavu
+ttf-jetbrains-mono-nerd
+ttf-nerd-fonts-symbols-mono
+
+## Filesystems (root is ext4; ESP is FAT)
+e2fsprogs
+
+## Misc
+less
+curl

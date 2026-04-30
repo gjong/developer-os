@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Install Developer OS
+Comment=Install Developer OS to disk with the graphical installer
+Exec=/usr/local/bin/developer-os-launch-installer
+Icon=calamares
+Terminal=false
+Categories=System;
+StartupNotify=true

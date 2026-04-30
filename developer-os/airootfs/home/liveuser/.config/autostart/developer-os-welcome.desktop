@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Developer OS Welcome
+Comment=Show the Developer OS first-login tool tour
+Exec=developer-os-welcome
+Icon=help-about
+Terminal=false
+X-GNOME-Autostart-enabled=true
+X-KDE-autostart-after=panel

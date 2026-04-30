@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+#
+# Developer OS terminal welcome banner for interactive shells.
+#
+set -u
+
+[[ -t 1 ]] || exit 0
+[[ "${TERM:-}" != "dumb" ]] || exit 0
+[[ "${DEVELOPER_OS_NO_ZSH_WELCOME:-0}" != "1" ]] || exit 0
+
+color() {
+  tput "$@" 2>/dev/null || true
+}
+
+bold="$(color bold)"
+reset="$(color sgr0)"
+blue="$(color setaf 4)"
+cyan="$(color setaf 6)"
+green="$(color setaf 2)"
+yellow="$(color setaf 3)"
+muted="$(color setaf 8)"
+
+username="$(id -un 2>/dev/null || printf '%s' "${USER:-developer}")"
+hostname="$(hostname 2>/dev/null || printf 'developer-os')"
+
+ip_address="$(
+  ip -o -4 addr show scope global up 2>/dev/null |
+    awk '{ split($4, address, "/"); print address[1]; exit }'
+)"
+ip_address="${ip_address:-offline}"
+
+network_name="$(
+  nmcli -t -f NAME,TYPE connection show --active 2>/dev/null |
+    awk -F: '$2 != "loopback" { print $1; exit }'
+)"
+network_name="${network_name:-not connected}"
+
+pending_updates="$(
+  pacman -Qu 2>/dev/null | wc -l | tr -d ' '
+)"
+pending_updates="${pending_updates:-0}"
+
+if [[ "${pending_updates}" == "0" ]]; then
+  updates_label="system up to date"
+  updates_color="${green}"
+else
+  updates_label="${pending_updates} package"
+  [[ "${pending_updates}" == "1" ]] || updates_label="${updates_label}s"
+  updates_label="${updates_label} pending"
+  updates_color="${yellow}"
+fi
+
+printf '\n'
+printf '%s%s+------------------------------------------------------------+%s\n' "${bold}" "${blue}" "${reset}"
+printf '%s%s|                       Developer OS                         |%s\n' "${bold}" "${blue}" "${reset}"
+printf '%s%s|%s  Welcome %-47s %s%s|%s\n' "${bold}" "${blue}" "${cyan}" "${username}" "${bold}" "${blue}" "${reset}"
+printf '%s%s+------------------------------------------------------------+%s\n' "${bold}" "${blue}" "${reset}"
+printf '  %sUser%s       %s@%s\n' "${muted}" "${reset}" "${username}" "${hostname}"
+printf '  %sNetwork%s    %s\n' "${muted}" "${reset}" "${network_name}"
+printf '  %sIP address%s %s\n' "${muted}" "${reset}" "${ip_address}"
+printf '  %sUpdates%s    %s%s%s\n' "${muted}" "${reset}" "${updates_color}" "${updates_label}" "${reset}"
+printf '%s\n\n' "${muted}Tip: set DEVELOPER_OS_NO_ZSH_WELCOME=1 to hide this banner.${reset}"

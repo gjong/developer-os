@@ -1,0 +1,8 @@
+# syntax=docker/dockerfile:1
+# Builder image for CI: archiso + deps. Layer + pacman download cache via BuildKit GHA backend.
+FROM library/archlinux:latest
+
+RUN --mount=type=cache,target=/var/cache/pacman/pkg \
+    pacman-key --init \
+ && pacman-key --populate archlinux \
+ && pacman -Sy --needed --noconfirm archiso arch-install-scripts sudo

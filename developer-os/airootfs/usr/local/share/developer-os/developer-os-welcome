@@ -1,0 +1,56 @@
+#!/usr/bin/env bash
+#
+# First-login welcome tour for Developer OS.
+#
+set -euo pipefail
+
+qml_file="/usr/local/share/developer-os/developer-os-welcome.qml"
+state_dir="${XDG_STATE_HOME:-${HOME}/.local/state}/developer-os"
+marker="${state_dir}/welcome-shown"
+show_again=0
+
+case "${1:-}" in
+  --again|--force)
+    show_again=1
+    ;;
+  --help|-h)
+    cat <<'EOF'
+Usage: developer-os-welcome [--again]
+
+Shows the Developer OS welcome tour. Without --again it is shown once per user.
+EOF
+    exit 0
+    ;;
+esac
+
+if [[ "${show_again}" -eq 0 && -e "${marker}" ]]; then
+  exit 0
+fi
+
+install -d -m 0700 "${state_dir}"
+touch "${marker}"
+
+find_qml_runner() {
+  local candidate
+  for candidate in qml6 qml qmlscene-qt6 qmlscene /usr/lib/qt6/bin/qml /usr/lib/qt6/bin/qmlscene /usr/lib/qt/bin/qml /usr/lib/qt/bin/qmlscene; do
+    if [[ -x "${candidate}" ]]; then
+      printf '%s\n' "${candidate}"
+      return 0
+    fi
+    if command -v "${candidate}" >/dev/null 2>&1; then
+      command -v "${candidate}"
+      return 0
+    fi
+  done
+  return 1
+}
+
+if [[ -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" && -r "${qml_file}" ]]; then
+  if runner="$(find_qml_runner)"; then
+    exec "${runner}" "${qml_file}"
+  fi
+fi
+
+if command -v kdialog >/dev/null 2>&1; then
+  kdialog --title "Welcome to Developer OS" --msgbox $'Welcome to Developer OS.\n\nInstalled tools:\n\n- vfox: manage language runtimes and CLIs.\n- JetBrains Toolbox: install and update JetBrains IDEs.\n- GitHub CLI: run `gh auth login` to manage GitHub from the terminal.\n- Docker: enable the service with `sudo systemctl enable --now docker`.\n\nRun `developer-os-welcome --again` after installing the QML runtime to reopen the full tour.'
+fi

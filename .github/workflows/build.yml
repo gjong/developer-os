@@ -1,0 +1,66 @@
+name: Build Developer OS ISO
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  # Required for Docker BuildKit cache export (type=gha) in build-push-action.
+  actions: write
+
+env:
+  PROFILE_DIR: developer-os
+
+jobs:
+  build-iso:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Compute SOURCE_DATE_EPOCH
+        id: epoch
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            E=$(git log -1 --format=%ct "${{ github.event.pull_request.head.sha }}")
+          else
+            E=$(git log -1 --format=%ct HEAD)
+          fi
+          echo "value=$E" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pacman packages (mkarchiso / pacstrap)
+        uses: actions/cache@v4
+        with:
+          path: ${{ github.workspace }}/pacman-pkg-cache
+          key: pacman-${{ runner.os }}
+          restore-keys: |
+            pacman-${{ runner.os }}-
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Arch ISO builder image (cached layers)
+        uses: docker/build-push-action@v6
+        with:
+          context: ./developer-os
+          file: ./docker/Dockerfile.ci
+          push: false
+          load: true
+          tags: developer-os-iso-builder:latest
+          cache-from: type=gha
+          # Fork PRs get a read-only token; skip cache export to avoid failing the step.
+          cache-to: ${{ (github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository) && 'type=gha,mode=max' || '' }}
+
+      - name: Build ISO in Arch container
+        run: |
+          set -euo pipefail
+          mkdir -p "${{ github.workspace }}/pacman-pkg-cache"
+          docker run --privileged --rm \
+            -e "SOURCE_DATE_EPOCH=${{ steps.epoch.outputs.value }}" \
+            -v "${{ github.workspace }}:/workspace:rw" \
+            -v "${{ github.workspace }}/pacman-pkg-cache:/var/cache/pacman/pkg:rw" \
+            -w "/workspace/${{ env.PROFILE_DIR }}" \
+            developer-os-iso-builder:latest \
+            bash -lc 'set -euo pipefail; chmod +x build.sh; ./build.sh'

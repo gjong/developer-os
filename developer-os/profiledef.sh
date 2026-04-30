@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2034
+
+iso_name="developer-os"
+iso_label="DEVOS_$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y%m)"
+iso_publisher="developer-os"
+iso_application="Developer OS — A developer-friendly live image"
+iso_version="$(date --date="@${SOURCE_DATE_EPOCH:-$(date +%s)}" +%Y.%m.%d)"
+# mkarchiso: install_dir max 8 chars, [a-z0-9] only
+install_dir="devos"
+buildmodes=('iso')
+bootmodes=('bios.syslinux'
+           'uefi.systemd-boot')
+pacman_conf="pacman.conf"
+airootfs_image_type="squashfs"
+airootfs_image_tool_options=('-comp' 'xz' '-Xbcj' 'x86' '-b' '1M' '-Xdict-size' '1M')
+bootstrap_tarball_compression=('zstd' '-c' '-T0' '--auto-threads=logical' '--long' '-19')
+file_permissions=(
+  ["/etc/shadow"]="0:0:400"
+  ["/root"]="0:0:750"
+  ["/root/.automated_script.sh"]="0:0:755"
+  ["/root/.gnupg"]="0:0:700"
+  ["/root/customize.sh"]="0:0:755"
+  ["/usr/local/bin/choose-mirror"]="0:0:755"
+  ["/usr/local/bin/Installation_guide"]="0:0:755"
+  ["/usr/local/bin/livecd-sound"]="0:0:755"
+  ["/usr/local/bin/developer-os-install"]="0:0:755"
+  ["/usr/local/bin/developer-os-launch-installer"]="0:0:755"
+  ["/usr/local/bin/developer-os-welcome"]="0:0:755"
+  ["/usr/local/bin/developer-os-zsh-welcome"]="0:0:755"
+  ["/usr/local/bin/install-mactahoe-kde-theme.sh"]="0:0:755"
+  ["/etc/sudoers.d/20-calamares-env"]="0:0:440"
+  ["/usr/local/share/developer-os/apply-installed-profile.sh"]="0:0:755"
+  ["/usr/local/share/developer-os/configure-installed-system.sh"]="0:0:755"
+  ["/usr/local/share/developer-os/developer-os-welcome"]="0:0:755"
+  ["/usr/local/share/developer-os/install-calamares.sh"]="0:0:755"
+  ["/usr/local/share/developer-os/install-extras.sh"]="0:0:755"
+  ["/usr/local/share/developer-os/seed-plasma-mactahoe.sh"]="0:0:755"
+  ["/usr/local/share/developer-os/sync-etc-skel-from-home.sh"]="0:0:755"
+)

@@ -1,0 +1,154 @@
+#!/usr/bin/env bash
+#
+# Developer OS — install to disk entry point.
+# Run from the live session: sudo developer-os-install
+#
+# Offers: quick Developer OS install, official archinstall, or the wiki guide.
+#
+set -euo pipefail
+
+[[ "$(id -u)" -eq 0 ]] || { echo "Run as root: sudo $0" >&2; exit 1; }
+
+PACMAN_CONF="${PACMAN_CONF:-/etc/pacman.conf}"
+PKG_LIST="${PKG_LIST:-/usr/local/share/developer-os/installer-packages.list}"
+[[ -f "$PACMAN_CONF" ]] || { echo "Missing $PACMAN_CONF" >&2; exit 1; }
+[[ -f "$PKG_LIST" ]] || { echo "Missing $PKG_LIST" >&2; exit 1; }
+
+mapfile -t PKGS < <(sed '/^[[:space:]]*#/d;/^[[:space:]]*$/d' "$PKG_LIST")
+((${#PKGS[@]})) || { echo "No packages in $PKG_LIST" >&2; exit 1; }
+
+part_suffix() {
+  # nvme0n1p1 / mmcblk0p1 vs sda1 / vda1
+  if [[ "$1" =~ (nvme|mmcblk) ]]; then
+    echo "${1}p${2}"
+  else
+    echo "${1}${2}"
+  fi
+}
+
+developer_os_quick_install() {
+echo "Developer OS — quick disk install"
+echo "==================================="
+echo "UEFI + GPT only. Wipes the entire target disk."
+echo
+lsblk -dpno NAME,SIZE,MODEL,TRAN | grep -v loop || true
+echo
+read -r -p "Target disk (e.g. /dev/sda or /dev/nvme0n1): " DISK
+[[ -n "${DISK:-}" ]] || exit 1
+[[ -b "$DISK" ]] || { echo "Not a block device: $DISK" >&2; exit 1; }
+
+if [[ ! "$DISK" =~ ^/dev/(nvme[0-9]+n[0-9]+|mmcblk[0-9]+|sd[a-z]|vd[a-z])$ ]]; then
+  echo "Refusing disk path (use whole disk, e.g. /dev/sda): $DISK" >&2
+  exit 1
+fi
+
+ESP_PART="$(part_suffix "$DISK" 1)"
+ROOT_PART="$(part_suffix "$DISK" 2)"
+
+echo
+read -r -p "Login name on installed system [developer]: " IN_USER
+IN_USER="${IN_USER:-developer}"
+read -r -s -p "Password for ${IN_USER}: " PW1
+echo
+read -r -s -p "Again: " PW2
+echo
+[[ -n "$PW1" && "$PW1" == "$PW2" ]] || { echo "Passwords empty or do not match." >&2; exit 1; }
+
+echo
+read -r -p "Type YES to wipe ${DISK} and install: " CONF
+[[ "$CONF" == "YES" ]] || { echo "Aborted."; exit 1; }
+
+echo "[1/7] Partitioning..."
+parted -s "$DISK" mklabel gpt
+parted -s "$DISK" mkpart ESP fat32 1MiB 551MiB
+parted -s "$DISK" set 1 esp on
+parted -s "$DISK" mkpart root ext4 551MiB 100%
+partprobe "$DISK" 2>/dev/null || true
+sleep 1
+[[ -b "$ESP_PART" && -b "$ROOT_PART" ]] || {
+  echo "Partitions not found: $ESP_PART $ROOT_PART" >&2
+  exit 1
+}
+
+echo "[2/7] Formatting..."
+mkfs.fat -F32 -n ESP "$ESP_PART"
+mkfs.ext4 -F -L developer_os "$ROOT_PART"
+
+echo "[3/7] Mounting..."
+mount "$ROOT_PART" /mnt
+mkdir -p /mnt/boot
+mount "$ESP_PART" /mnt/boot
+
+echo "[4/7] pacstrap..."
+pacstrap -C "$PACMAN_CONF" /mnt "${PKGS[@]}"
+
+echo "[5/7] fstab..."
+genfstab -U /mnt >>/mnt/etc/fstab
+
+ROOT_UUID=$(findmnt -no UUID /mnt)
+[[ -n "$ROOT_UUID" ]]
+
+echo "[6/7] Bootloader (systemd-boot)..."
+install -d /mnt/boot/loader/entries
+cat >/mnt/boot/loader/loader.conf <<EOF
+default developer-os.conf
+timeout 3
+console-mode max
+editor no
+EOF
+cat >/mnt/boot/loader/entries/developer-os.conf <<EOF
+title   Developer OS
+linux   /vmlinuz-linux
+initrd  /initramfs-linux.img
+options root=UUID=${ROOT_UUID} rw quiet
+EOF
+
+echo "[7/7] Developer OS profile (same as live image: Brave, vfox, JetBrains Toolbox, MacTahoe, dotfiles)..."
+PW1="$PW1" DEVELOPER_OS_CREATE_USER=1 DEVELOPER_OS_INSTALL_BOOTLOADER=1 \
+  /usr/local/share/developer-os/apply-installed-profile.sh /mnt "$IN_USER" extras
+
+echo
+echo "Installed Developer OS on ${ROOT_PART} (EFI ${ESP_PART}). User: ${IN_USER}"
+echo "Run: umount -R /mnt && reboot"
+echo "Desktop: log in at SDDM (Plasma Wayland is the default session)."
+}
+
+run_archinstall() {
+  if ! command -v archinstall >/dev/null 2>&1; then
+    echo "archinstall is not installed on this medium." >&2
+    echo "From a networked live session: pacman -Sy archinstall" >&2
+    exit 1
+  fi
+  exec archinstall
+}
+
+open_installation_guide() {
+  _url='https://wiki.archlinux.org/title/Installation_guide'
+  if [[ -n "${DISPLAY:-}" || -n "${WAYLAND_DISPLAY:-}" ]] && command -v xdg-open >/dev/null 2>&1; then
+    if [[ -x /usr/local/bin/Installation_guide ]]; then
+      exec /usr/local/bin/Installation_guide
+    fi
+    exec xdg-open "$_url"
+  fi
+  echo "Installation guide (manual install): ${_url}"
+  echo "In a graphical session you can run: xdg-open ${_url}"
+  exit 0
+}
+
+echo "Developer OS — install to disk"
+echo "=============================="
+echo
+echo "  1  Quick install — Developer OS profile (UEFI, whole-disk wipe, systemd-boot, Plasma stack)"
+echo "  2  archinstall — official Arch Linux installer (encryption, partitioning, profiles, boot loaders, …)"
+echo "  3  Installation guide — open the Arch wiki steps (manual install from the live environment)"
+echo
+while true; do
+  read -r -p "Choice [1-3] (default 1): " _choice
+  _choice="${_choice:-1}"
+  case "${_choice}" in
+    1) developer_os_quick_install; break ;;
+    2) run_archinstall ;;
+    3) open_installation_guide ;;
+    *) echo "Enter 1, 2, or 3." ;;
+  esac
+done

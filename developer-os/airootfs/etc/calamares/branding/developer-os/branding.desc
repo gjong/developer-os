@@ -1,0 +1,40 @@
+---
+componentName: developer-os
+welcomeStyleCalamares: false
+welcomeExpandingLogo: true
+windowExpanding: normal
+windowSize: 900px,600px
+windowPlacement: center
+sidebar: widget
+navigation: widget
+
+strings:
+  productName: Developer OS
+  shortProductName: Developer OS
+  version: rolling
+  shortVersion: rolling
+  versionedName: Developer OS
+  shortVersionedName: Developer OS
+  bootloaderEntryName: Developer OS
+  productUrl: https://github.com/
+  supportUrl: https://wiki.archlinux.org/title/Installation_guide
+  knownIssuesUrl: https://wiki.archlinux.org/title/Installation_guide
+  releaseNotesUrl: ""
+  donateUrl: ""
+
+images:
+  productIcon: "developer-os-16x16.png"
+  productLogo: "developer-os-80x80.png"
+  productWelcome: "develop-os-welcome.png"
+
+style:
+  SidebarBackground: "#292F34"
+  SidebarText: "#FFFFFF"
+  SidebarTextCurrent: "#292F34"
+  SidebarBackgroundCurrent: "#D8DEE9"
+
+slideshow: "show.qml"
+slideshowAPI: 2
+
+uploadServer:
+  type: "none"

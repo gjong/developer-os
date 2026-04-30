@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Use X11 backend for root GUI compatibility in live sessions.
+export QT_QPA_PLATFORM="${QT_QPA_PLATFORM:-xcb}"
+
+install_calamares_if_missing() {
+  if command -v calamares >/dev/null 2>&1; then
+    return 0
+  fi
+
+  if [[ -x /usr/local/share/developer-os/install-calamares.sh ]]; then
+    if command -v pkexec >/dev/null 2>&1; then
+      pkexec /usr/local/share/developer-os/install-calamares.sh || true
+    elif sudo -n true >/dev/null 2>&1; then
+      sudo /usr/local/share/developer-os/install-calamares.sh || true
+    fi
+  fi
+
+  command -v calamares >/dev/null 2>&1
+}
+
+if ! install_calamares_if_missing; then
+  msg="Calamares is not installed in this live session.\nConnect to the internet and run:\n\nsudo /usr/local/share/developer-os/install-calamares.sh\n\nThen start the installer again."
+  if command -v kdialog >/dev/null 2>&1; then
+    kdialog --error "$msg" --title "Developer OS Installer"
+  else
+    printf '%b\n' "$msg" >&2
+  fi
+  exit 1
+fi
+
+if command -v pkexec >/dev/null 2>&1; then
+  exec pkexec calamares
+fi
+
+if sudo -n true >/dev/null 2>&1; then
+  exec sudo QT_QPA_PLATFORM="${QT_QPA_PLATFORM}" calamares
+fi
+
+msg="Installer could not start with administrator privileges.\nOpen a terminal and run:\n\nsudo calamares"
+if command -v kdialog >/dev/null 2>&1; then
+  kdialog --error "$msg" --title "Developer OS Installer"
+else
+  printf '%b\n' "$msg" >&2
+fi
+
+exit 1

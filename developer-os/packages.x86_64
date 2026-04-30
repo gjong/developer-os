@@ -1,0 +1,96 @@
+## Boot / archiso (required for mkarchiso)
+amd-ucode
+intel-ucode
+mkinitcpio
+mkinitcpio-archiso
+squashfs-tools
+syslinux
+edk2-shell
+dosfstools
+mtools
+e2fsprogs
+grub
+systemd-resolvconf
+
+## Core
+base
+linux
+linux-firmware
+sudo
+networkmanager
+
+## Install to disk (from live session)
+arch-install-scripts
+archinstall
+parted
+dosfstools
+efibootmgr
+rsync
+
+## KDE Plasma (Wayland) + portals
+plasma-desktop
+plasma-workspace-wallpapers
+plasma-nm
+sddm
+breeze-gtk
+kde-gtk-config
+kvantum
+xdg-desktop-portal-kde
+xdg-desktop-portal-gtk
+kdialog
+qt6-declarative
+kitty
+
+## Development
+git
+github-cli
+base-devel
+cmake
+ninja
+extra-cmake-modules
+vim
+docker
+docker-buildx
+docker-compose
+
+## Shell
+zsh
+starship
+zsh-autosuggestions
+zsh-syntax-highlighting
+
+## Flatpak
+flatpak
+
+## Audio / Bluetooth
+pipewire
+pipewire-pulse
+pipewire-alsa
+wireplumber
+pavucontrol
+bluez
+bluez-utils
+
+## Desktop apps / utilities
+thunar
+thunar-volman
+gvfs
+qt6-wayland
+kpmcore
+yaml-cpp
+libpwquality
+libdecor
+grim
+slurp
+wl-clipboard
+xdg-utils
+
+## Fonts / console
+terminus-font
+ttf-dejavu
+ttf-jetbrains-mono-nerd
+ttf-nerd-fonts-symbols-mono
+
+## Misc (small QoL)
+less
+curl
