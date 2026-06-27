@@ -25,7 +25,7 @@ else
 fi
 
 # --- vfox (pin here; bump with customize.sh / README) ---
-VFOX_VERSION="1.0.8"
+VFOX_VERSION="1.0.11"
 VFOX_TAG="v${VFOX_VERSION}"
 VFOX_TAR="vfox_${VFOX_VERSION}_linux_x86_64.tar.gz"
 VFOX_BASE="https://github.com/version-fox/vfox/releases/download/${VFOX_TAG}"
@@ -61,7 +61,7 @@ else
 fi
 
 # --- JetBrains Toolbox ---
-TOOLBOX_BUILD="3.4.3.81140"
+TOOLBOX_BUILD="3.5.0.84344"
 TOOLBOX_TAR="jetbrains-toolbox-${TOOLBOX_BUILD}.tar.gz"
 TOOLBOX_BASE="https://download.jetbrains.com/toolbox"
 install_jetbrains_toolbox() {
