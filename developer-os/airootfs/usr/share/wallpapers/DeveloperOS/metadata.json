@@ -1,0 +1,14 @@
+{
+    "KPackageStructure": "Plasma/Wallpaper",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Developer OS"
+            }
+        ],
+        "Id": "DeveloperOS",
+        "License": "LicenseRef-Unknown",
+        "Name": "Developer OS",
+        "Description": "Default wallpaper for Developer OS"
+    }
+}

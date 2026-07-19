@@ -14,7 +14,7 @@ Accepted
 2. In **`install-extras.sh`**, download **`checksums.txt`** and the pinned **`vfox_<ver>_linux_x86_64.tar.gz`**, verify with **`sha256sum -c`**, install **`vfox`** to **`/usr/local/bin/vfox`**, and install **bash** and **zsh** completions under **`/usr/local/share/...`**.
 3. In **`~/.zshrc`**, **`eval "$(vfox activate zsh)"`** when `vfox` is on `PATH`.
 
-Version is pinned as **`VFOX_VERSION`** in `install-extras.sh`; bump when upgrading the image. The live image runs this helper from **`customize.sh`**, and GUI/CLI disk installs use the same helper through the shared installed-profile flow.
+Version is pinned as **`VFOX_VERSION`** (default in `install-extras.sh`); bump when upgrading the image. Override **`VFOX_VERSION`** to install another release (used by **`developer-os-update`** / [ADR-0013](0013-post-install-app-updates.md)). The live image runs this helper from **`customize.sh`**, and GUI/CLI disk installs use the same helper through the shared installed-profile flow.
 
 ## Consequences
 

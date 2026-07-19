@@ -45,6 +45,22 @@ fi
 _resolve_wallpaper() {
   local f
   shopt -s nullglob
+  # Prefer the Developer OS branded wallpaper shipped in airootfs.
+  for f in \
+    /usr/share/wallpapers/DeveloperOS/contents/images/*.{jpeg,jpg,JPEG,JPG,png,PNG} \
+    /usr/share/wallpapers/DeveloperOS/contents/images_dark/*.{jpeg,jpg,JPEG,JPG,png,PNG}; do
+    if [[ -f "$f" ]]; then
+      printf '%s' "$f"
+      shopt -u nullglob
+      return 0
+    fi
+  done
+  # Legacy bare file (pre-package layout).
+  if [[ -f /usr/share/wallpapers/wallpaper.png ]]; then
+    printf '%s' /usr/share/wallpapers/wallpaper.png
+    shopt -u nullglob
+    return 0
+  fi
   for f in \
     /usr/share/wallpapers/MacTahoe-Dark/contents/images/*.{jpeg,jpg,JPEG,JPG,png,PNG} \
     /usr/share/wallpapers/MacTahoe/contents/images/*.{jpeg,jpg,JPEG,JPG,png,PNG} \
@@ -136,8 +152,41 @@ EOF
 install -m 0644 -o "${user}" -g "${user}" "${_tmp}" "${home}/.config/Kvantum/kvantum.kvconfig"
 
 if [[ -n "${_wallpaper_path}" ]]; then
-  _img_url="file://${_wallpaper_path}"
-  cat >"${_tmp}" <<EOF
+  # Prefer the wallpaper package directory when present (Plasma image wallpaper plugin).
+  if [[ -d /usr/share/wallpapers/DeveloperOS ]]; then
+    _img_url="file:///usr/share/wallpapers/DeveloperOS"
+  else
+    _img_url="file://${_wallpaper_path}"
+  fi
+
+  _appletsrc="${home}/.config/plasma-org.kde.plasma.desktop-appletsrc"
+  _uid="$(id -u "${user}" 2>/dev/null || true)"
+  _applied=0
+
+  # Best path: official helper updates the live appletsrc without wiping panels.
+  if [[ -n "${_uid}" ]] && command -v plasma-apply-wallpaperimage &>/dev/null; then
+    install -d -m 0700 -o "${user}" -g "${user}" "/run/user/${_uid}" 2>/dev/null || true
+    set +e
+    runuser -u "${user}" -- env \
+      HOME="${home}" \
+      XDG_RUNTIME_DIR="/run/user/${_uid}" \
+      plasma-apply-wallpaperimage "${_wallpaper_path}"
+    _pw=$?
+    set -e
+    if ((_pw == 0)); then
+      _applied=1
+    fi
+  fi
+
+  if ((_applied == 0)); then
+    if [[ -f "${_appletsrc}" ]] && grep -q 'org.kde.image' "${_appletsrc}"; then
+      # Preserve look-and-feel layout; only rewrite wallpaper image keys.
+      sed -i -E \
+        "s|^Image=.*$|Image=${_img_url}|g; s|^PreviewImage=.*$|PreviewImage=${_img_url}|g" \
+        "${_appletsrc}"
+      chown "${user}:${user}" "${_appletsrc}"
+    else
+      cat >"${_tmp}" <<EOF
 [Containments][1]
 activityId=
 formfactor=0
@@ -149,9 +198,12 @@ wallpaperplugin=org.kde.image
 
 [Containments][1][Wallpaper][org.kde.image][General]
 Image=${_img_url}
+PreviewImage=${_img_url}
 SlidePaths=/usr/share/wallpapers
 EOF
-  install -m 0644 -o "${user}" -g "${user}" "${_tmp}" "${home}/.config/plasma-org.kde.plasma.desktop-appletsrc"
+      install -m 0644 -o "${user}" -g "${user}" "${_tmp}" "${_appletsrc}"
+    fi
+  fi
 fi
 
 trap - EXIT

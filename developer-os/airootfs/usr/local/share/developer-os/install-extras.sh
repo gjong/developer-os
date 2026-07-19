@@ -24,8 +24,8 @@ else
   echo "[install-extras] WARNING: flatpak not installed; skipping Brave." >&2
 fi
 
-# --- vfox (pin here; bump with customize.sh / README) ---
-VFOX_VERSION="1.0.11"
+# --- vfox (default pin for reproducible ISO builds; override via env for updates) ---
+VFOX_VERSION="${VFOX_VERSION:-1.0.11}"
 VFOX_TAG="v${VFOX_VERSION}"
 VFOX_TAR="vfox_${VFOX_VERSION}_linux_x86_64.tar.gz"
 VFOX_BASE="https://github.com/version-fox/vfox/releases/download/${VFOX_TAG}"
@@ -43,6 +43,7 @@ install_vfox_from_github() {
   install -Dm0755 "${_root}/vfox" /usr/local/bin/vfox
   install -Dm0644 "${_root}/completions/bash_autocomplete" /usr/local/share/bash-completion/completions/vfox
   install -Dm0644 "${_root}/completions/zsh_autocomplete" /usr/local/share/zsh/site-functions/_vfox
+  printf '%s\n' "${VFOX_VERSION}" >/usr/local/share/developer-os/vfox.version
   trap - EXIT
   rm -rf "${tmp}"
 }
@@ -60,12 +61,12 @@ else
   echo "[install-extras] WARNING: curl missing; skipping vfox." >&2
 fi
 
-# --- JetBrains Toolbox ---
-TOOLBOX_BUILD="3.5.0.84344"
+# --- JetBrains Toolbox (default pin for reproducible ISO builds; override via env for updates) ---
+TOOLBOX_BUILD="${TOOLBOX_BUILD:-3.5.0.84344}"
 TOOLBOX_TAR="jetbrains-toolbox-${TOOLBOX_BUILD}.tar.gz"
 TOOLBOX_BASE="https://download.jetbrains.com/toolbox"
 install_jetbrains_toolbox() {
-  local tmp
+  local tmp extracted
   tmp="$(mktemp -d)"
   # shellcheck disable=SC2064
   trap "rm -rf '${tmp}'" EXIT
@@ -73,10 +74,19 @@ install_jetbrains_toolbox() {
   curl -fsSL "${TOOLBOX_BASE}/${TOOLBOX_TAR}.sha256" -o "${tmp}/${TOOLBOX_TAR}.sha256"
   (cd "${tmp}" && sha256sum -c "${TOOLBOX_TAR}.sha256")
   tar -xzf "${tmp}/${TOOLBOX_TAR}" -C "${tmp}"
+  extracted="${tmp}/jetbrains-toolbox-${TOOLBOX_BUILD}"
+  if [[ ! -d "${extracted}" ]]; then
+    # Newer Toolbox tarballs may unpack to a slightly different directory name.
+    extracted="$(find "${tmp}" -mindepth 1 -maxdepth 1 -type d -name 'jetbrains-toolbox-*' | head -n1)"
+  fi
+  [[ -n "${extracted}" && -d "${extracted}" ]] || {
+    echo "[install-extras] ERROR: JetBrains Toolbox extract dir missing." >&2
+    return 1
+  }
   rm -rf /opt/jetbrains-toolbox
-  mv "${tmp}/jetbrains-toolbox-${TOOLBOX_BUILD}" /opt/jetbrains-toolbox
+  mv "${extracted}" /opt/jetbrains-toolbox
   ln -sf /opt/jetbrains-toolbox/bin/jetbrains-toolbox /usr/local/bin/jetbrains-toolbox
-  install -d /usr/share/applications
+  install -d /usr/share/applications /usr/local/share/developer-os
   cat >/usr/share/applications/jetbrains-toolbox.desktop <<'EOF'
 [Desktop Entry]
 Type=Application
@@ -90,6 +100,7 @@ Categories=Development;Utility;
 MimeType=
 EOF
   chmod 0755 /opt/jetbrains-toolbox/bin/jetbrains-toolbox
+  printf '%s\n' "${TOOLBOX_BUILD}" >/usr/local/share/developer-os/jetbrains-toolbox.version
   trap - EXIT
   rm -rf "${tmp}"
 }

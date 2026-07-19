@@ -33,17 +33,27 @@ copy_executable_helper() {
   fi
 }
 
-for helper in install-extras.sh seed-plasma-mactahoe.sh sync-etc-skel-from-home.sh configure-installed-system.sh apply-installed-profile.sh developer-os-welcome; do
+for helper in install-extras.sh update-extras.sh seed-plasma-mactahoe.sh sync-etc-skel-from-home.sh configure-installed-system.sh apply-installed-profile.sh prepare-installed-mkinitcpio.sh developer-os-welcome developer-os-update; do
   copy_if_present "/usr/local/share/developer-os/${helper}" "${TARGET_ROOT}/usr/local/share/developer-os/"
   chmod 0755 "${TARGET_ROOT}/usr/local/share/developer-os/${helper}" 2>/dev/null || true
 done
 copy_if_present /usr/local/share/developer-os/developer-os-welcome.qml "${TARGET_ROOT}/usr/local/share/developer-os/"
+copy_if_present /usr/share/applications/developer-os-update.desktop "${TARGET_ROOT}/usr/share/applications/"
 
-for helper in developer-os-install developer-os-welcome developer-os-zsh-welcome install-mactahoe-kde-theme.sh Installation_guide choose-mirror; do
+for helper in developer-os-install developer-os-welcome developer-os-zsh-welcome developer-os-update install-mactahoe-kde-theme.sh Installation_guide choose-mirror; do
   copy_executable_helper "${helper}"
 done
 
 copy_if_present /usr/local/share/developer-os/installer-packages.list "${TARGET_ROOT}/usr/local/share/developer-os/"
+
+# Branded wallpaper (airootfs); not part of pacstrap package set.
+if [[ -d /usr/share/wallpapers/DeveloperOS ]]; then
+  install -d "${TARGET_ROOT}/usr/share/wallpapers"
+  cp -a /usr/share/wallpapers/DeveloperOS "${TARGET_ROOT}/usr/share/wallpapers/"
+elif [[ -f /usr/share/wallpapers/wallpaper.png ]]; then
+  install -d "${TARGET_ROOT}/usr/share/wallpapers"
+  cp -a /usr/share/wallpapers/wallpaper.png "${TARGET_ROOT}/usr/share/wallpapers/"
+fi
 
 if [[ -x "${TARGET_ROOT}/usr/local/share/developer-os/configure-installed-system.sh" ]]; then
   arch-chroot "${TARGET_ROOT}" env IN_USER="${IN_USER}" PW1="${PW1:-}" DEVELOPER_OS_CREATE_USER="${DEVELOPER_OS_CREATE_USER:-0}" DEVELOPER_OS_INSTALL_BOOTLOADER="${DEVELOPER_OS_INSTALL_BOOTLOADER:-0}" /usr/local/share/developer-os/configure-installed-system.sh

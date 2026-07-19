@@ -14,6 +14,8 @@ The live image now ships a full Plasma desktop, so users should be able to insta
 
 Ship **Calamares** on the live ISO as the primary graphical installer. Since Calamares is not available from the official Arch repositories enabled in `pacman.conf`, install it during `customize.sh` from the AUR package instead of listing it in `packages.x86_64`. The Calamares module graph unpacks the live `airootfs.sfs` onto the target, removes live-only packages and autologin behavior from the installed system, configures system settings through standard modules, and calls shared Developer OS post-install scripts for services, sudo, dotfiles, `/etc/skel`, Flathub/Brave, vfox, JetBrains Toolbox, and MacTahoe.
 
+Before **`initcpio`**, run **`prepare-installed-mkinitcpio.sh`**: replace the live-only `linux.preset` (`PRESETS=('archiso')`) and remove `mkinitcpio.conf.d/archiso.conf` / `mkinitcpio-archiso`, so the installed system builds normal `default`/`fallback` initramfs images.
+
 Keep **`developer-os-install`** as the CLI fallback, but make it call the same shared post-install/profile scripts so GUI and CLI installs stay aligned.
 
 ## Consequences
