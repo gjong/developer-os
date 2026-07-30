@@ -40,6 +40,7 @@ file_permissions=(
   ["/usr/local/share/developer-os/update-extras.sh"]="0:0:755"
   ["/usr/local/share/developer-os/prepare-installed-mkinitcpio.sh"]="0:0:755"
   ["/usr/local/share/developer-os/seed-plasma-mactahoe.sh"]="0:0:755"
+  ["/usr/local/share/developer-os/strip-plasma-showdesktop.sh"]="0:0:755"
   ["/usr/local/share/developer-os/sync-etc-skel-from-home.sh"]="0:0:755"
   ["/usr/share/applications/developer-os-update.desktop"]="0:0:644"
 )

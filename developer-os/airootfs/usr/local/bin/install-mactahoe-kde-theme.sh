@@ -38,6 +38,12 @@ install_from_git() {
 
   trap - EXIT
   rm -rf "${tmp}"
+
+  # Drop Peek at Desktop from MacTahoe panel layouts (user-desktop icon on the bar).
+  if [[ -x /usr/local/share/developer-os/strip-plasma-showdesktop.sh ]]; then
+    /usr/local/share/developer-os/strip-plasma-showdesktop.sh /
+  fi
+
   echo "[install-mactahoe-kde-theme] Installed from GitHub."
 }
 
@@ -89,6 +95,11 @@ rsync_from_live() {
     echo "[install-mactahoe-kde-theme] ERROR: --rsync-from-live found no MacTahoe look-and-feel on the live system." >&2
     return 1
   fi
+
+  if [[ -x /usr/local/share/developer-os/strip-plasma-showdesktop.sh ]]; then
+    /usr/local/share/developer-os/strip-plasma-showdesktop.sh "${dest}"
+  fi
+
   echo "[install-mactahoe-kde-theme] Copied MacTahoe theme from live medium into ${dest}."
 }
 

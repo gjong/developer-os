@@ -15,6 +15,12 @@ home=$(getent passwd "$user" | cut -d: -f6)
   exit 1
 }
 
+# Always strip Peek at Desktop from stock/default panel templates so a fallback
+# bottom panel does not include the user-desktop icon.
+if [[ -x /usr/local/share/developer-os/strip-plasma-showdesktop.sh ]]; then
+  /usr/local/share/developer-os/strip-plasma-showdesktop.sh /
+fi
+
 if [[ ! -d /usr/share/plasma/look-and-feel/com.github.vinceliuice.MacTahoe-Dark \
       && ! -d /usr/share/plasma/look-and-feel/com.github.vinceliuice.MacTahoe-Light ]]; then
   echo "[seed-plasma-mactahoe] MacTahoe look-and-feel not found under /usr/share; skipping." >&2
@@ -204,6 +210,12 @@ EOF
       install -m 0644 -o "${user}" -g "${user}" "${_tmp}" "${_appletsrc}"
     fi
   fi
+fi
+
+# Ensure Peek at Desktop did not land in the seeded panel config.
+if [[ -x /usr/local/share/developer-os/strip-plasma-showdesktop.sh ]]; then
+  /usr/local/share/developer-os/strip-plasma-showdesktop.sh --appletsrc \
+    "${home}/.config/plasma-org.kde.plasma.desktop-appletsrc"
 fi
 
 trap - EXIT
