@@ -33,7 +33,7 @@ copy_executable_helper() {
   fi
 }
 
-for helper in install-extras.sh update-extras.sh seed-plasma-mactahoe.sh sync-etc-skel-from-home.sh configure-installed-system.sh apply-installed-profile.sh prepare-installed-mkinitcpio.sh developer-os-welcome developer-os-update; do
+for helper in install-extras.sh update-extras.sh seed-plasma-mactahoe.sh strip-plasma-showdesktop.sh sync-etc-skel-from-home.sh configure-installed-system.sh apply-installed-profile.sh prepare-installed-mkinitcpio.sh developer-os-welcome developer-os-update; do
   copy_if_present "/usr/local/share/developer-os/${helper}" "${TARGET_ROOT}/usr/local/share/developer-os/"
   chmod 0755 "${TARGET_ROOT}/usr/local/share/developer-os/${helper}" 2>/dev/null || true
 done

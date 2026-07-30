@@ -60,6 +60,11 @@ else
   echo "[customize.sh] WARNING: /usr/local/share/developer-os/install-extras.sh missing." >&2
 fi
 
+# --- Remove Peek at Desktop from Plasma panel templates (bottom application bar) ---
+if [[ -x /usr/local/share/developer-os/strip-plasma-showdesktop.sh ]]; then
+  /usr/local/share/developer-os/strip-plasma-showdesktop.sh /
+fi
+
 # --- MacTahoe: seed Plasma for liveuser (install.sh -c dark installs …MacTahoe-Dark, not …Light) ---
 if [[ -x /usr/local/share/developer-os/seed-plasma-mactahoe.sh ]]; then
   /usr/local/share/developer-os/seed-plasma-mactahoe.sh liveuser
