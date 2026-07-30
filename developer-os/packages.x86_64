@@ -44,6 +44,8 @@ kitty
 ## Development
 git
 github-cli
+aws-cli-v2
+azure-cli
 base-devel
 cmake
 ninja
