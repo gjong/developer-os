@@ -22,7 +22,7 @@ ApplicationWindow {
             command: "Open the launcher or start with the terminal.",
             bullets: [
                 "Plasma desktop with a developer-friendly profile.",
-                "Git, GitHub CLI, Docker, vfox, and JetBrains Toolbox are included.",
+                "Git, GitHub CLI, AWS CLI, Azure CLI, Docker, vfox, and JetBrains Toolbox are included.",
                 "Use this short tour to learn what each tool is for."
             ]
         },

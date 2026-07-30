@@ -52,5 +52,5 @@ if [[ -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" && -r "${qml_file}" ]]; then
 fi
 
 if command -v kdialog >/dev/null 2>&1; then
-  kdialog --title "Welcome to Developer OS" --msgbox $'Welcome to Developer OS.\n\nInstalled tools:\n\n- vfox: manage language runtimes and CLIs.\n- JetBrains Toolbox: install and update JetBrains IDEs.\n- GitHub CLI: run `gh auth login` to manage GitHub from the terminal.\n- Docker: enable the service with `sudo systemctl enable --now docker`.\n\nRun `developer-os-welcome --again` after installing the QML runtime to reopen the full tour.'
+  kdialog --title "Welcome to Developer OS" --msgbox $'Welcome to Developer OS.\n\nInstalled tools:\n\n- vfox: manage language runtimes and CLIs.\n- JetBrains Toolbox: install and update JetBrains IDEs.\n- GitHub CLI: run `gh auth login` to manage GitHub from the terminal.\n- AWS CLI: run `aws configure` (or use SSO) to talk to Amazon Web Services.\n- Azure CLI: run `az login` to manage Microsoft Azure.\n- Docker: enable the service with `sudo systemctl enable --now docker`.\n\nRun `developer-os-welcome --again` after installing the QML runtime to reopen the full tour.'
 fi
