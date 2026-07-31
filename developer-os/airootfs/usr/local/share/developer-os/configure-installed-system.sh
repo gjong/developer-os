@@ -16,6 +16,8 @@ fi
 
 systemctl enable NetworkManager.service
 systemctl enable bluetooth.service
+systemctl enable docker.service
+systemctl enable ollama.service
 systemctl enable sddm.service
 systemctl set-default graphical.target
 systemctl --global enable pipewire.socket pipewire-pulse.socket wireplumber.service 2>/dev/null || true
@@ -33,6 +35,9 @@ if [[ -n "${IN_USER}" ]]; then
     useradd -m -G wheel,video,input,audio,storage -s /usr/bin/zsh "${IN_USER}"
   else
     usermod -aG wheel,video,input,audio,storage -s /usr/bin/zsh "${IN_USER}"
+  fi
+  if getent group docker &>/dev/null; then
+    usermod -aG docker "${IN_USER}" 2>/dev/null || true
   fi
 
   if [[ -n "${PW1}" ]]; then

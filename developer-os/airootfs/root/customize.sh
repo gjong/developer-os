@@ -15,6 +15,10 @@ if ! id -u liveuser &>/dev/null; then
   useradd -M -d /home/liveuser -g liveuser -s /usr/bin/zsh liveuser
 fi
 usermod -aG wheel,video,input,audio,storage liveuser 2>/dev/null || true
+# docker group comes from the docker package (installed via packages.x86_64).
+if getent group docker &>/dev/null; then
+  usermod -aG docker liveuser 2>/dev/null || true
+fi
 passwd -d liveuser &>/dev/null || true
 install -d -m 0755 -o liveuser -g liveuser /home/liveuser/Pictures
 chown -R liveuser:liveuser /home/liveuser
@@ -28,6 +32,8 @@ chmod 0440 /etc/sudoers.d/10-wheel
 # --- Services ---
 systemctl enable NetworkManager.service
 systemctl enable bluetooth.service
+systemctl enable docker.service
+systemctl enable ollama.service
 systemctl --global enable pipewire.socket pipewire-pulse.socket wireplumber.service
 systemctl enable sddm.service
 systemctl set-default graphical.target
