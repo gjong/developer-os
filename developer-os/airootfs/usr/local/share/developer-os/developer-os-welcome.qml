@@ -22,7 +22,7 @@ ApplicationWindow {
             command: "Open the launcher or start with the terminal.",
             bullets: [
                 "Plasma desktop with a developer-friendly profile.",
-                "Git, GitHub CLI, AWS CLI, Azure CLI, Docker, vfox, and JetBrains Toolbox are included.",
+                "Git, GitHub CLI, AWS CLI, Azure CLI, Docker, Ollama, vfox, and JetBrains Toolbox are included.",
                 "Use this short tour to learn what each tool is for."
             ]
         },
@@ -65,13 +65,25 @@ ApplicationWindow {
         {
             kicker: "Containers",
             title: "Docker",
-            subtitle: "Docker, Buildx, and Docker Compose are installed for local services, containers, and reproducible build environments.",
+            subtitle: "Docker, Buildx, and Docker Compose are installed and enabled for local services, containers, and reproducible build environments.",
             accent: "#60a5fa",
-            command: "sudo systemctl enable --now docker && sudo usermod -aG docker $USER",
+            command: "docker compose up",
             bullets: [
-                "Start Docker with `sudo systemctl enable --now docker`.",
-                "Add your user to the docker group, then log out and back in.",
+                "The Docker service starts on boot; your user is in the `docker` group.",
+                "Run `docker run hello-world` to verify the daemon.",
                 "Run `docker compose up` in projects that include a compose file."
+            ]
+        },
+        {
+            kicker: "Local AI",
+            title: "Ollama",
+            subtitle: "Ollama runs large language models locally. The service is enabled so you can pull and chat with models from the terminal.",
+            accent: "#a78bfa",
+            command: "ollama pull llama3.2 && ollama run llama3.2",
+            bullets: [
+                "The Ollama service starts on boot.",
+                "Pull a model with `ollama pull <name>` (for example `llama3.2`).",
+                "Chat with `ollama run <name>` or point apps at the local API on port 11434."
             ]
         }
     ]

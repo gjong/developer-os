@@ -54,6 +54,7 @@ vim
 docker
 docker-buildx
 docker-compose
+ollama
 
 ## Shell
 zsh
