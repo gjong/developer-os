@@ -24,6 +24,7 @@ if command -v vfox >/dev/null 2>&1; then
   eval "$(vfox activate zsh)"
 fi
 
+# System welcome banner (skip with DEVELOPER_OS_NO_ZSH_WELCOME=1)
 if [[ -o interactive ]] && command -v developer-os-zsh-welcome >/dev/null 2>&1; then
   developer-os-zsh-welcome
 fi

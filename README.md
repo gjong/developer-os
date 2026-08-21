@@ -106,6 +106,7 @@ From Plasma, open **Update Developer OS apps** in the application launcher (runs
 
 - User **`liveuser`** (empty password, **sudo** via `wheel`).
 - **SDDM** auto-logs **`liveuser`** into **Plasma (Wayland)** on boot (see **`airootfs/etc/sddm.conf.d/autologin.conf`**). Use the panel application launcher or **KRunner** (default shortcut is often **Meta** / Super).
+- Interactive **Zsh** shows a system welcome banner (session, kernel, memory, disk, network, Java/Node/.NET/Docker, and first-hour commands). Hide it with `export DEVELOPER_OS_NO_ZSH_WELCOME=1`.
 
 ## Reproducibility
 

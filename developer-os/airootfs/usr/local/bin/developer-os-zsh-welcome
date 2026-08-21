@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 #
-# Developer OS terminal welcome banner for interactive shells.
+# Developer OS terminal welcome for interactive shells.
+# Hide with: export DEVELOPER_OS_NO_ZSH_WELCOME=1
 #
 set -u
 
@@ -8,20 +9,194 @@ set -u
 [[ "${TERM:-}" != "dumb" ]] || exit 0
 [[ "${DEVELOPER_OS_NO_ZSH_WELCOME:-0}" != "1" ]] || exit 0
 
-color() {
-  tput "$@" 2>/dev/null || true
+reset=$'\033[0m'
+bold=$'\033[1m'
+dim=$'\033[2m'
+
+if [[ "${COLORTERM:-}" == *truecolor* || "${COLORTERM:-}" == *24bit* || "${TERM:-}" == *-direct ]]; then
+  rgb() { printf '\033[38;2;%d;%d;%dm' "$1" "$2" "$3"; }
+else
+  rgb() { printf '\033[38;5;%dm' "${4:-7}"; }
+fi
+
+accent="$(rgb 124 58 237 141)"    # violet
+cyan="$(rgb 56 189 248 81)"
+green="$(rgb 52 211 153 79)"
+amber="$(rgb 251 191 36 220)"
+rose="$(rgb 251 113 133 210)"
+text="$(rgb 226 232 240 255)"
+muted="$(rgb 148 163 184 245)"
+border="$(rgb 71 85 105 240)"
+label="$(rgb 165 180 252 147)"
+
+visible_len() {
+  local stripped
+  stripped="$(printf '%s' "$1" | sed 's/\x1B\[[0-9;]*[mK]//g')"
+  printf '%s' "$stripped" | wc -m | tr -d ' '
 }
 
-bold="$(color bold)"
-reset="$(color sgr0)"
-blue="$(color setaf 4)"
-cyan="$(color setaf 6)"
-green="$(color setaf 2)"
-yellow="$(color setaf 3)"
-muted="$(color setaf 8)"
+repeat() {
+  local char="$1" count="$2" out=""
+  local i=0
+  while (( i < count )); do
+    out+="${char}"
+    i=$((i + 1))
+  done
+  printf '%s' "${out}"
+}
+
+pad_plain() {
+  local s="$1" width="$2"
+  local len="${#s}"
+  if (( len >= width )); then
+    printf '%s' "${s:0:width}"
+    return
+  fi
+  printf '%s%*s' "$s" "$((width - len))" ""
+}
+
+bar() {
+  local pct="$1" width="${2:-14}"
+  local filled rest color
+  (( pct < 0 )) && pct=0
+  (( pct > 100 )) && pct=100
+  filled=$(( (pct * width + 50) / 100 ))
+  rest=$((width - filled))
+  if (( pct >= 90 )); then
+    color="${rose}"
+  elif (( pct >= 70 )); then
+    color="${amber}"
+  else
+    color="${green}"
+  fi
+  printf '%s%s%s%s%s' "${color}" "$(repeat '━' "${filled}")" "${muted}" "$(repeat '─' "${rest}")" "${reset}"
+}
+
+human_bytes() {
+  awk -v b="${1:-0}" 'BEGIN {
+    split("B KiB MiB GiB TiB", u, " ")
+    i = 1
+    while (b >= 1024 && i < 5) { b /= 1024; i++ }
+    if (i == 1) printf "%d %s", b, u[i]
+    else if (b >= 10) printf "%.0f %s", b, u[i]
+    else printf "%.1f %s", b, u[i]
+  }'
+}
+
+human_uptime() {
+  local sec="${1%.*}"
+  local days=$((sec / 86400))
+  local hours=$(( (sec % 86400) / 3600 ))
+  local mins=$(( (sec % 3600) / 60 ))
+  if (( days > 0 )); then
+    printf '%dd %dh' "${days}" "${hours}"
+  elif (( hours > 0 )); then
+    printf '%dh %dm' "${hours}" "${mins}"
+  else
+    printf '%dm' "${mins}"
+  fi
+}
+
+cols="${COLUMNS:-}"
+tty_cols="$(tput cols 2>/dev/null || true)"
+if [[ -z "${cols}" || ! "${cols}" =~ ^[0-9]+$ ]]; then
+  cols="${tty_cols:-80}"
+fi
+if [[ "${tty_cols}" =~ ^[0-9]+$ ]] && (( tty_cols < cols )); then
+  cols="${tty_cols}"
+fi
+(( cols < 64 )) && cols=64
+(( cols > 84 )) && cols=84
+inner=$((cols - 2))
+
+rule_line() {
+  printf '%s╭%s╮%s\n' "${border}" "$(repeat '─' "${inner}")" "${reset}"
+}
+
+rule_bottom() {
+  printf '%s╰%s╯%s\n' "${border}" "$(repeat '─' "${inner}")" "${reset}"
+}
+
+row() {
+  local content="$1"
+  local vis pad
+  vis="$(visible_len "${content}")"
+  pad=$((inner - vis))
+  (( pad < 0 )) && pad=0
+  printf '%s│%s%s%s%s│%s\n' "${border}" "${content}" "${reset}" "$(printf '%*s' "${pad}" "")" "${border}" "${reset}"
+}
+
+blank() {
+  row " "
+}
+
+kv() {
+  local key="$1" value="$2" extra="${3:-}"
+  row "  ${label}$(pad_plain "${key}" 11)${reset} ${text}${value}${reset}${extra}"
+}
 
 username="$(id -un 2>/dev/null || printf '%s' "${USER:-developer}")"
 hostname="$(hostname 2>/dev/null || printf 'developer-os')"
+kernel="$(uname -r)"
+arch="$(uname -m)"
+hour="$(date +%H)"
+hour="${hour#0}"
+if (( hour < 12 )); then
+  greeting="Good morning"
+elif (( hour < 18 )); then
+  greeting="Good afternoon"
+else
+  greeting="Good evening"
+fi
+
+if [[ -d /run/archiso ]] || [[ "${username}" == "liveuser" ]]; then
+  session_kind="Live session"
+  session_color="${amber}"
+else
+  session_kind="Installed system"
+  session_color="${green}"
+fi
+
+desktop="${XDG_CURRENT_DESKTOP:-Plasma}"
+session_type="${XDG_SESSION_TYPE:-wayland}"
+desktop_line="${desktop} · ${session_type}"
+
+os_base="Arch Linux"
+if [[ -r /etc/os-release ]]; then
+  # shellcheck disable=SC1091
+  os_base="$(. /etc/os-release && printf '%s' "${PRETTY_NAME:-Arch Linux}")"
+fi
+
+uptime_txt="—"
+if [[ -r /proc/uptime ]]; then
+  read -r up_sec _ </proc/uptime
+  uptime_txt="$(human_uptime "${up_sec}")"
+fi
+
+cores="$(nproc 2>/dev/null || printf '1')"
+
+mem_line="—"
+mem_bar=""
+if [[ -r /proc/meminfo ]]; then
+  mem_total="$(awk '/^MemTotal:/{print $2 * 1024}' /proc/meminfo)"
+  mem_avail="$(awk '/^MemAvailable:/{print $2 * 1024}' /proc/meminfo)"
+  mem_used=$((mem_total - mem_avail))
+  mem_pct=0
+  (( mem_total > 0 )) && mem_pct=$((mem_used * 100 / mem_total))
+  mem_line="$(human_bytes "${mem_used}")  /  $(human_bytes "${mem_total}")"
+  mem_bar="  $(bar "${mem_pct}")  ${muted}${mem_pct}%${reset}"
+fi
+
+disk_line="—"
+disk_bar=""
+if df_out="$(df -B1 --output=used,size,target / 2>/dev/null | awk 'NR==2{print $1, $2}')"; then
+  disk_used="${df_out%% *}"
+  disk_total="${df_out##* }"
+  disk_pct=0
+  [[ -n "${disk_total}" && "${disk_total}" -gt 0 ]] && disk_pct=$((disk_used * 100 / disk_total))
+  disk_line="$(human_bytes "${disk_used}")  /  $(human_bytes "${disk_total}")"
+  disk_bar="  $(bar "${disk_pct}")  ${muted}${disk_pct}%${reset}"
+fi
 
 ip_address="$(
   ip -o -4 addr show scope global up 2>/dev/null |
@@ -35,28 +210,107 @@ network_name="$(
 )"
 network_name="${network_name:-not connected}"
 
-pending_updates="$(
-  pacman -Qu 2>/dev/null | wc -l | tr -d ' '
-)"
-pending_updates="${pending_updates:-0}"
-
-if [[ "${pending_updates}" == "0" ]]; then
-  updates_label="system up to date"
-  updates_color="${green}"
-else
-  updates_label="${pending_updates} package"
-  [[ "${pending_updates}" == "1" ]] || updates_label="${updates_label}s"
-  updates_label="${updates_label} pending"
-  updates_color="${yellow}"
+updates_label="${green}up to date${reset}"
+if command -v timeout >/dev/null 2>&1 && command -v pacman >/dev/null 2>&1; then
+  pending_updates="$(timeout 0.4 pacman -Quq 2>/dev/null | wc -l | tr -d ' ')"
+  pending_updates="${pending_updates:-0}"
+  if [[ "${pending_updates}" != "0" ]]; then
+    if [[ "${pending_updates}" == "1" ]]; then
+      updates_label="${amber}1 package pending${reset}"
+    else
+      updates_label="${amber}${pending_updates} packages pending${reset}"
+    fi
+  fi
 fi
 
+tool_status() {
+  local name="$1" cmd="$2" getter="$3"
+  local ver=""
+  if ! command -v "${cmd}" >/dev/null 2>&1; then
+    printf '%s%s ○ %s%s' "${muted}" "${name}" "—" "${reset}"
+    return 1
+  fi
+  if [[ -n "${getter}" ]] && command -v timeout >/dev/null 2>&1; then
+    ver="$(timeout 0.25 bash -c "${getter}" 2>/dev/null | tr -d '\r' | head -n1)"
+  fi
+  ver="${ver:-ok}"
+  printf '%s%s ● %s%s' "${green}" "${name}" "${text}${ver}" "${reset}"
+  return 0
+}
+
+java_s="$(tool_status "Java" java "java -version 2>&1 | awk -F '\"' '/version/{print \$2; exit}'")"
+node_s="$(tool_status "Node" node "node -v")"
+dotnet_s="$(tool_status ".NET" dotnet "dotnet --version")"
+
+java_ok=1
+node_ok=1
+dotnet_ok=1
+command -v java >/dev/null 2>&1 && java_ok=0
+command -v node >/dev/null 2>&1 && node_ok=0
+command -v dotnet >/dev/null 2>&1 && dotnet_ok=0
+
+docker_s="${muted}Docker ○ —${reset}"
+if command -v docker >/dev/null 2>&1; then
+  if command -v systemctl >/dev/null 2>&1 && systemctl is-active --quiet docker 2>/dev/null; then
+    docker_s="${green}Docker ● ${text}running${reset}"
+  else
+    docker_s="${amber}Docker ● ${text}installed${reset}"
+  fi
+fi
+
+row_spread() {
+  local left="$1" right="$2"
+  local vis_l vis_r gap
+  vis_l="$(visible_len "${left}")"
+  vis_r="$(visible_len "${right}")"
+  gap=$((inner - vis_l - vis_r))
+  (( gap < 1 )) && gap=1
+  row "${left}$(printf '%*s' "${gap}" "")${right}"
+}
+
+tip() {
+  local cmd="$1" desc="$2"
+  row "  ${accent}▸${reset} ${cyan}$(pad_plain "${cmd}" 24)${reset} ${muted}${desc}${reset}"
+}
+
+need_bootstrap=0
+(( java_ok != 0 || node_ok != 0 || dotnet_ok != 0 )) && need_bootstrap=1
+
 printf '\n'
-printf '%s%s+------------------------------------------------------------+%s\n' "${bold}" "${blue}" "${reset}"
-printf '%s%s|                       Developer OS                         |%s\n' "${bold}" "${blue}" "${reset}"
-printf '%s%s|%s  Welcome %-47s %s%s|%s\n' "${bold}" "${blue}" "${cyan}" "${username}" "${bold}" "${blue}" "${reset}"
-printf '%s%s+------------------------------------------------------------+%s\n' "${bold}" "${blue}" "${reset}"
-printf '  %sUser%s       %s@%s\n' "${muted}" "${reset}" "${username}" "${hostname}"
-printf '  %sNetwork%s    %s\n' "${muted}" "${reset}" "${network_name}"
-printf '  %sIP address%s %s\n' "${muted}" "${reset}" "${ip_address}"
-printf '  %sUpdates%s    %s%s%s\n' "${muted}" "${reset}" "${updates_color}" "${updates_label}" "${reset}"
-printf '%s\n\n' "${muted}Tip: set DEVELOPER_OS_NO_ZSH_WELCOME=1 to hide this banner.${reset}"
+rule_line
+blank
+row_spread "  ${accent}  ╭─────╮${reset}    ${bold}${text}Developer OS${reset}" "${session_color}${session_kind}${reset}"
+row "  ${accent}  │ ${bold}${text}</>${reset}${accent} │${reset}    ${muted}${os_base} · ${desktop_line}${reset}"
+row "  ${accent}  ╰─────╯${reset}    ${cyan}${username}${reset}${muted} @ ${reset}${text}${hostname}${reset}"
+blank
+row "  ${muted}${greeting}. This shell is Zsh with Starship, autosuggestions, and vfox.${reset}"
+blank
+row "  ${border}$(repeat '─' $((inner - 2)))${reset}"
+blank
+kv "Kernel" "${kernel}  (${arch})"
+kv "Uptime" "${uptime_txt}    ${muted}${cores} cores${reset}"
+kv "Memory" "${mem_line}" "${mem_bar}"
+kv "Disk" "${disk_line}" "${disk_bar}"
+kv "Network" "$(pad_plain "${network_name}" 22) ${muted}${ip_address}${reset}"
+kv "Updates" "${updates_label}"
+blank
+row "  ${bold}${text}Toolchain${reset}"
+if (( cols < 78 )); then
+  row "  ${java_s}    ${node_s}"
+  row "  ${dotnet_s}    ${docker_s}"
+else
+  row "  ${java_s}    ${node_s}    ${dotnet_s}    ${docker_s}"
+fi
+blank
+row "  ${bold}${text}Get started${reset}"
+if (( need_bootstrap == 1 )); then
+  tip "developer-os-bootstrap" "install Java 21, Node LTS, .NET LTS"
+fi
+tip "code ." "open Code - OSS in this directory"
+tip "gh auth login" "connect GitHub"
+tip "jetbrains-toolbox" "IntelliJ, Rider, or WebStorm"
+blank
+row "  ${dim}${muted}Hide this banner: export DEVELOPER_OS_NO_ZSH_WELCOME=1${reset}"
+blank
+rule_bottom
+printf '\n'
