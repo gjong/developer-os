@@ -44,6 +44,9 @@ github-cli
 aws-cli-v2
 azure-cli
 base-devel
+cmake
+ninja
+extra-cmake-modules
 vim
 docker
 docker-buildx
@@ -69,6 +72,7 @@ bluez
 bluez-utils
 
 ## Desktop apps / utilities
+firefox
 thunar
 thunar-volman
 gvfs

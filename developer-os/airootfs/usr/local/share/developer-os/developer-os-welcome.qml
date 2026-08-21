@@ -41,13 +41,13 @@ ApplicationWindow {
         {
             kicker: "IDEs",
             title: "JetBrains Toolbox",
-            subtitle: "JetBrains Toolbox installs and updates JetBrains IDEs from one place, including IntelliJ IDEA, WebStorm, PyCharm, GoLand, and RustRover.",
+            subtitle: "JetBrains Toolbox installs and updates JetBrains IDEs from one place, including IntelliJ IDEA, Rider, WebStorm, PyCharm, GoLand, and RustRover.",
             accent: "#f97316",
             command: "jetbrains-toolbox",
             bullets: [
                 "Open Toolbox from the application launcher or run `jetbrains-toolbox`.",
                 "Sign in with your JetBrains account to sync licenses and settings.",
-                "Install only the IDEs you need for the projects you work on."
+                "Install IntelliJ IDEA for Java, Rider for .NET, or WebStorm for web work."
             ]
         },
         {

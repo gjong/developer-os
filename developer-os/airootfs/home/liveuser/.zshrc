@@ -27,12 +27,6 @@ if [[ -o interactive ]] && command -v developer-os-zsh-welcome >/dev/null 2>&1; 
   developer-os-zsh-welcome
 fi
 
-plugins=(
-  git
-  gradle
-  java
-)
-
 alias ll='ls -lh'
 alias la='ls -lha'
 alias vi='vim'

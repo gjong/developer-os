@@ -75,6 +75,7 @@ bluez
 bluez-utils
 
 ## Desktop apps / utilities
+firefox
 thunar
 thunar-volman
 gvfs
