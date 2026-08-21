@@ -117,7 +117,14 @@ fi
 
 # Remove live-session behavior from installed systems.
 rm -f "${TARGET_ROOT}/etc/sddm.conf.d/autologin.conf"
-rm -rf "${TARGET_ROOT}/etc/calamares" "${TARGET_ROOT}/usr/share/applications/developer-os-installer.desktop"
+rm -rf "${TARGET_ROOT}/etc/calamares"
+rm -f \
+  "${TARGET_ROOT}/usr/share/applications/install-develop-os.desktop" \
+  "${TARGET_ROOT}/usr/share/applications/developer-os-installer.desktop" \
+  "${TARGET_ROOT}/usr/share/applications/calamares.desktop" \
+  "${TARGET_ROOT}/usr/local/bin/developer-os-launch-installer" \
+  "${TARGET_ROOT}/usr/local/share/developer-os/install-calamares.sh" \
+  "${TARGET_ROOT}/etc/sudoers.d/20-calamares-env"
 if arch-chroot "${TARGET_ROOT}" id -u liveuser &>/dev/null; then
   arch-chroot "${TARGET_ROOT}" userdel -r liveuser 2>/dev/null || true
 fi

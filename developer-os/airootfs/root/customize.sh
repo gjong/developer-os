@@ -46,11 +46,11 @@ if [[ -x /usr/local/share/developer-os/install-calamares.sh ]]; then
   set -e
   if ((_cal != 0)); then
     echo "[customize.sh] WARNING: install-calamares.sh exited ${_cal}; GUI installer will be unavailable." >&2
-    rm -f /usr/share/applications/developer-os-installer.desktop
+    rm -f /usr/share/applications/install-develop-os.desktop
   fi
 else
   echo "[customize.sh] WARNING: /usr/local/share/developer-os/install-calamares.sh missing." >&2
-  rm -f /usr/share/applications/developer-os-installer.desktop
+  rm -f /usr/share/applications/install-develop-os.desktop
 fi
 
 # --- Same optional stack as disk install (Flathub/Brave, vfox, JetBrains Toolbox, MacTahoe) ---
