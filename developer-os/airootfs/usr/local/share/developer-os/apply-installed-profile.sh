@@ -136,7 +136,17 @@ rm -f \
   "${TARGET_ROOT}/usr/local/bin/developer-os-launch-installer" \
   "${TARGET_ROOT}/usr/local/share/developer-os/install-calamares.sh" \
   "${TARGET_ROOT}/etc/sudoers.d/20-calamares-env"
-if arch-chroot "${TARGET_ROOT}" id -u liveuser &>/dev/null; then
-  arch-chroot "${TARGET_ROOT}" userdel -r liveuser 2>/dev/null || true
-fi
-rm -rf "${TARGET_ROOT}/home/liveuser"
+remove_live_only_user() {
+  local name="$1"
+  if arch-chroot "${TARGET_ROOT}" id -u "${name}" &>/dev/null; then
+    arch-chroot "${TARGET_ROOT}" userdel -r "${name}" 2>/dev/null || \
+      arch-chroot "${TARGET_ROOT}" userdel "${name}" 2>/dev/null || true
+  fi
+  rm -rf "${TARGET_ROOT}/home/${name}" "${TARGET_ROOT}/var/tmp/${name}"
+}
+
+# liveuser is the ISO session account. aurbuild/auruser are throwaway
+# makepkg users created while building Calamares from the AUR.
+remove_live_only_user liveuser
+remove_live_only_user aurbuild
+remove_live_only_user auruser

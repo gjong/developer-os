@@ -43,6 +43,10 @@ pacman_conf_backup="/tmp/pacman.conf.calamares.bak"
 cleanup() {
   rm -f "${sudoers_tmp}"
   rm -rf "${build_dir}"
+  if id -u "${build_user}" >/dev/null 2>&1; then
+    userdel -r "${build_user}" 2>/dev/null || userdel "${build_user}" 2>/dev/null || true
+  fi
+  rm -rf "${build_home}"
   if [[ -f "${pacman_conf_backup}" ]]; then
     mv -f "${pacman_conf_backup}" "${pacman_conf}"
   fi
