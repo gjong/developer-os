@@ -9,7 +9,9 @@ Reproducible **archiso** profile with **KDE Plasma (Wayland)** via **SDDM**, dev
 - **Boot**: BIOS (SYSLINUX) + UEFI (**systemd-boot**), matching upstream archiso releng layout.
 - **Desktop**: Plasma (Wayland session), SDDM, NetworkManager applet (`plasma-nm`), Kitty, GTK/Qt portal stack (`xdg-desktop-portal-kde` + `-gtk`), **Kvantum**, and the **[MacTahoe-kde](https://github.com/vinceliuice/MacTahoe-kde)** look-and-feel (plus **[MacTahoe-icon-theme](https://github.com/vinceliuice/MacTahoe-icon-theme)** for icons/cursors) installed system-wide when **git** can reach GitHub during the ISO build or disk install; otherwise the installer tries to copy theme files from the live medium. The default desktop wallpaper is the branded **Developer OS** package under `/usr/share/wallpapers/DeveloperOS`.
 - **Apps**: Thunar, Firefox, **Brave** (Flatpak from [Flathub](https://flathub.org/apps/com.brave.Browser)), screenshot tools (`grim` / `slurp`), `wl-clipboard`.
-- **Dev**: Git, `base-devel`, **cmake** / **ninja**, **Docker** (service enabled; user in `docker` group), **Ollama**, **AWS CLI v2**, **Azure CLI**, **vfox** (pinned GitHub release → `/usr/local/bin`; see [ADR-0009](./docs/adr/0009-vfox-binary-from-github.md)), **JetBrains Toolbox** (pinned official Linux tarball → `/opt/jetbrains-toolbox`, menu entry; install IntelliJ IDEA, **Rider**, WebStorm, and other JetBrains IDEs from there — see [Toolbox App](https://www.jetbrains.com/toolbox-app/)).
+- **Dev**: Git, `git-lfs`, `base-devel`, **cmake** / **ninja**, **Docker** (service enabled; user in `docker` group), **Ollama**, **AWS CLI v2**, **Azure CLI**, **vfox** (pinned GitHub release → `/usr/local/bin`; plugins for Java, Maven, Gradle, Node, and .NET pre-added under `/opt/vfox` — see [ADR-0009](./docs/adr/0009-vfox-binary-from-github.md) and [ADR-0014](./docs/adr/0014-runtime-bootstrap.md)), **JetBrains Toolbox** (pinned official Linux tarball → `/opt/jetbrains-toolbox`, menu entry; install IntelliJ IDEA, **Rider**, WebStorm, and other JetBrains IDEs from there — see [Toolbox App](https://www.jetbrains.com/toolbox-app/)).
+- **CLI staples**: OpenSSH, wget, unzip/zip, jq, Python, ripgrep, fd, tree, man-db, htop.
+- **First-hour runtimes**: after install, run **`developer-os-bootstrap`** (your user, not sudo) to download Java 21, Node LTS, .NET LTS, Maven, and Gradle. See [Language runtimes](#language-runtimes).
 - **Shell**: Zsh + Starship + autosuggestions + syntax highlighting (from distro packages).
 - **Audio / BT**: PipeWire + WirePlumber, Bluetooth stack.
 - **Flatpak**: `flathub` remote added at image build time.
@@ -69,6 +71,20 @@ The live desktop includes a **Calamares** graphical installer. It exposes the sa
 
 The installed system receives the same **`liveuser`** dotfiles under **`.config`** (and shell rc files when present), **`vfox`** if it was on the ISO, **Flathub**, and the Developer OS Plasma/MacTahoe profile. **SDDM** is enabled with **`graphical.target`**; log in at the greeter (Plasma Wayland is the default session). See [ADR-0011](./docs/adr/0011-kde-plasma-wayland-session.md).
 
+## Language runtimes
+
+Java, Node, and .NET SDKs are **not** baked into the ISO. After you log into the installed system (with network):
+
+```bash
+developer-os-bootstrap
+```
+
+That command uses **vfox** (plugins already registered) to install **Java 21**, **Maven**, **Gradle**, **Node.js LTS** (and pnpm via corepack when possible), and **.NET LTS**, then sets them as your global versions. Open a new terminal afterwards. From Plasma you can also launch **Install language runtimes**.
+
+Do **not** run it with `sudo`; SDKs must belong to your user. If `/opt/vfox` is not writable, log out and back in so the `vfox` group applies. See [ADR-0014](./docs/adr/0014-runtime-bootstrap.md).
+
+Then install an IDE from **JetBrains Toolbox**: IntelliJ IDEA (Java), Rider (.NET), or WebStorm (web).
+
 ## Updating apps after install
 
 Extras installed by **`install-extras.sh`** (Brave Flatpak, **vfox**, **JetBrains Toolbox**, MacTahoe) are pinned at image-build / install time and are not covered by a normal `pacman -Syu` alone. To refresh them to upstream latest (and update Arch packages by default):
@@ -108,7 +124,8 @@ Rationale: [ADR-0002](./docs/adr/0002-ci-archlinux-container.md), [ADR-0006](./d
 - **`invalid group liveuser` during build:** `customize.sh` creates the `liveuser` group before `chown`; see [ADR-0004](./docs/adr/0004-liveuser-and-customize-hook.md).
 - **Black screen or SDDM loop:** confirm **`plasma-desktop`** is installed and try another session from the SDDM session menu. On current Arch Plasma, the Wayland session file is **`plasma.desktop`** under **`/usr/share/wayland-sessions/`** (see [ADR-0011](./docs/adr/0011-kde-plasma-wayland-session.md)).
 - **MacTahoe missing or partial:** the theme is cloned during **`mkarchiso`** and during GUI/CLI disk installs (needs **network**). Offline installs fall back to copying **`/usr/share/...`** from the live session if the ISO was built with the theme present. See [MacTahoe-kde](https://github.com/vinceliuice/MacTahoe-kde).
-- **`vfox` missing:** installed from a **pinned GitHub release** by `install-extras.sh`, which `customize.sh` runs during the ISO build (needs network). After boot, `vfox` is on `PATH`; zsh runs `eval "$(vfox activate zsh)"`. See [ADR-0009](./docs/adr/0009-vfox-binary-from-github.md). To refresh to the latest release after install, run **`sudo developer-os-update`** (see [Updating apps after install](#updating-apps-after-install)).
+- **`vfox` missing:** installed from a **pinned GitHub release** by `install-extras.sh`, which `customize.sh` runs during the ISO build (needs network). After boot, `vfox` is on `PATH`; zsh runs `eval "$(vfox activate zsh)"` with **`VFOX_HOME=/opt/vfox`**. See [ADR-0009](./docs/adr/0009-vfox-binary-from-github.md) and [ADR-0014](./docs/adr/0014-runtime-bootstrap.md). To refresh to the latest release after install, run **`sudo developer-os-update`** (see [Updating apps after install](#updating-apps-after-install)).
+- **`java` / `node` / `dotnet` missing after install:** expected until you run **`developer-os-bootstrap`** as your user. If it cannot write `/opt/vfox`, log out and back in (membership in the `vfox` group).
 - **Calamares missing from the live session:** Calamares is built from its AUR package during `customize.sh` because it is not available from the official Arch repositories enabled in `pacman.conf`; the ISO build needs network access to `aur.archlinux.org`.
 - **Install script fails at `pacstrap`:** ensure mirrors work (`reflector` is not included by default); use `pacman -Sy` on the live system first or edit `pacman.conf` / mirrorlist.
 - **Calamares does not start:** from a terminal in the live session, run `sudo -E calamares -d` to see module/config errors.

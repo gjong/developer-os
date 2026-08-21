@@ -19,6 +19,7 @@ if command -v starship >/dev/null 2>&1; then
 fi
 
 # vfox — version manager (installed from GitHub release in customize.sh; not in Arch [extra])
+export VFOX_HOME="${VFOX_HOME:-/opt/vfox}"
 if command -v vfox >/dev/null 2>&1; then
   eval "$(vfox activate zsh)"
 fi

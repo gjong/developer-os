@@ -10,6 +10,9 @@ PW1="${PW1:-}"
 DEVELOPER_OS_INSTALL_BOOTLOADER="${DEVELOPER_OS_INSTALL_BOOTLOADER:-0}"
 DEVELOPER_OS_CREATE_USER="${DEVELOPER_OS_CREATE_USER:-0}"
 
+getent group vfox >/dev/null 2>&1 || groupadd vfox
+install -d -m 2775 -o root -g vfox /opt/vfox
+
 if [[ "${DEVELOPER_OS_INSTALL_BOOTLOADER}" == "1" ]]; then
   bootctl install --esp-path=/boot --no-variables
 fi
@@ -32,9 +35,9 @@ if [[ -n "${IN_USER}" ]]; then
       echo "User ${IN_USER} does not exist and DEVELOPER_OS_CREATE_USER is not enabled." >&2
       exit 1
     fi
-    useradd -m -G wheel,video,input,audio,storage -s /usr/bin/zsh "${IN_USER}"
+    useradd -m -G wheel,video,input,audio,storage,vfox -s /usr/bin/zsh "${IN_USER}"
   else
-    usermod -aG wheel,video,input,audio,storage -s /usr/bin/zsh "${IN_USER}"
+    usermod -aG wheel,video,input,audio,storage,vfox -s /usr/bin/zsh "${IN_USER}"
   fi
   if getent group docker &>/dev/null; then
     usermod -aG docker "${IN_USER}" 2>/dev/null || true

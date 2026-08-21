@@ -61,6 +61,34 @@ else
   echo "[install-extras] WARNING: curl missing; skipping vfox." >&2
 fi
 
+# --- Shared vfox plugins (Java / Maven / Gradle / Node / .NET) ---
+VFOX_HOME="${VFOX_HOME:-/opt/vfox}"
+export VFOX_HOME
+setup_vfox_shared_home() {
+  getent group vfox >/dev/null 2>&1 || groupadd vfox
+  install -d -m 2775 -o root -g vfox "${VFOX_HOME}"
+  if ! grep -q '^VFOX_HOME=' /etc/environment 2>/dev/null; then
+    printf 'VFOX_HOME=%s\n' "${VFOX_HOME}" >>/etc/environment
+  fi
+  if [[ ! -x /usr/local/bin/vfox ]]; then
+    echo "[install-extras] WARNING: vfox missing; skipping plugin pre-add." >&2
+    return 0
+  fi
+  set +e
+  /usr/local/bin/vfox add java maven gradle nodejs dotnet
+  _plug=$?
+  set -e
+  if ((_plug != 0)); then
+    echo "[install-extras] WARNING: vfox add plugins exited ${_plug}; need network." >&2
+  else
+    echo "[install-extras] vfox plugins added under ${VFOX_HOME} (java maven gradle nodejs dotnet)."
+  fi
+  chgrp -R vfox "${VFOX_HOME}" 2>/dev/null || true
+  chmod -R g+rwX "${VFOX_HOME}" 2>/dev/null || true
+  find "${VFOX_HOME}" -type d -exec chmod 2775 {} + 2>/dev/null || true
+}
+setup_vfox_shared_home
+
 # --- JetBrains Toolbox (default pin for reproducible ISO builds; override via env for updates) ---
 TOOLBOX_BUILD="${TOOLBOX_BUILD:-3.5.0.84344}"
 TOOLBOX_TAR="jetbrains-toolbox-${TOOLBOX_BUILD}.tar.gz"

@@ -95,3 +95,15 @@ e2fsprogs
 ## Misc
 less
 curl
+openssh
+wget
+unzip
+zip
+jq
+python
+git-lfs
+ripgrep
+fd
+tree
+man-db
+htop

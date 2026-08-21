@@ -15,34 +15,58 @@ ApplicationWindow {
     property int pageIndex: 0
     property var pages: [
         {
-            kicker: "Welcome",
+            kicker: "First hour",
             title: "Welcome Developer",
-            subtitle: "Developer OS ships with a focused toolchain for building, testing, shipping, and managing real projects from the first login.",
+            subtitle: "Developer OS is set up for Java, .NET, and web work. Runtimes are not baked into the ISO; install them once with the bootstrap command, then open an IDE.",
             accent: "#7c3aed",
-            command: "Open the launcher or start with the terminal.",
+            command: "developer-os-bootstrap",
             bullets: [
-                "Plasma desktop with a developer-friendly profile.",
-                "Git, GitHub CLI, AWS CLI, Azure CLI, Docker, Ollama, vfox, and JetBrains Toolbox are included.",
-                "Use this short tour to learn what each tool is for."
+                "Git, Docker, Firefox, vfox, and JetBrains Toolbox are already installed.",
+                "Run `developer-os-bootstrap` (or Install language runtimes from the launcher) to get Java 21, Node LTS, .NET LTS, Maven, and Gradle.",
+                "Needs network. Open a new terminal afterwards so `java`, `node`, and `dotnet` are on PATH."
             ]
         },
         {
-            kicker: "Version Manager",
-            title: "vfox",
-            subtitle: "vfox is a fast, cross-platform version manager. Use it to install and switch language runtimes and CLIs per project.",
-            accent: "#38bdf8",
-            command: "vfox add nodejs && vfox install nodejs@latest && vfox use nodejs@latest",
+            kicker: "Java",
+            title: "Java",
+            subtitle: "After bootstrap, JDK 21, Maven, and Gradle are on PATH. Install IntelliJ IDEA from JetBrains Toolbox for a full IDE.",
+            accent: "#f97316",
+            command: "java -version && mvn -version",
             bullets: [
-                "Install runtimes such as Node.js, Go, Java, Python, and more via plugins.",
-                "Pin project versions so every shell opens with the right toolchain.",
-                "Run `vfox available <plugin>` to discover versions."
+                "Bootstrap installs `java@21`, `maven`, and `gradle` through vfox.",
+                "Open Toolbox and install IntelliJ IDEA (Community or Ultimate).",
+                "Pin a project with `vfox use -p java@21` in the repo, or keep the global default."
+            ]
+        },
+        {
+            kicker: ".NET",
+            title: ".NET",
+            subtitle: "After bootstrap, the .NET SDK is on PATH. Install Rider from JetBrains Toolbox for C# and ASP.NET work. Azure CLI is already installed.",
+            accent: "#38bdf8",
+            command: "dotnet --info",
+            bullets: [
+                "Bootstrap installs the .NET LTS SDK (`dotnet@8`, or another LTS if 8 is unavailable).",
+                "Open Toolbox and install Rider.",
+                "Sign in with `az login` when you work with Azure."
+            ]
+        },
+        {
+            kicker: "Web",
+            title: "Web",
+            subtitle: "After bootstrap, Node.js LTS is on PATH with npm, and pnpm via corepack when possible. Install WebStorm from Toolbox, or use Firefox and Brave for browser testing.",
+            accent: "#22c55e",
+            command: "node -v && npm -v",
+            bullets: [
+                "Bootstrap installs `nodejs` LTS and tries to activate pnpm with `corepack`.",
+                "Open Toolbox and install WebStorm.",
+                "Use `vfox use -p nodejs@22` (or your project's version) inside a repo."
             ]
         },
         {
             kicker: "IDEs",
             title: "JetBrains Toolbox",
-            subtitle: "JetBrains Toolbox installs and updates JetBrains IDEs from one place, including IntelliJ IDEA, Rider, WebStorm, PyCharm, GoLand, and RustRover.",
-            accent: "#f97316",
+            subtitle: "JetBrains Toolbox installs and updates IDEs from one place: IntelliJ IDEA, Rider, WebStorm, and others.",
+            accent: "#a78bfa",
             command: "jetbrains-toolbox",
             bullets: [
                 "Open Toolbox from the application launcher or run `jetbrains-toolbox`.",
@@ -53,12 +77,12 @@ ApplicationWindow {
         {
             kicker: "GitHub",
             title: "GitHub CLI",
-            subtitle: "The `gh` command brings pull requests, issues, releases, and authentication into your terminal.",
+            subtitle: "The `gh` command brings pull requests, issues, releases, and authentication into your terminal. `git` and `git-lfs` are installed.",
             accent: "#22c55e",
             command: "gh auth login",
             bullets: [
                 "Authenticate once with `gh auth login`.",
-                "Clone repositories with `gh repo clone owner/name`.",
+                "Clone with `gh repo clone owner/name` or `git clone git@github.com:owner/name.git` (OpenSSH is installed).",
                 "Create pull requests with `gh pr create` and review checks with `gh pr checks`."
             ]
         },

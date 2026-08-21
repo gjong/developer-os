@@ -1,0 +1,133 @@
+#!/usr/bin/env bash
+#
+# Install Java, Node, .NET, Maven, and Gradle via vfox for the current user.
+# Run as your login user (not root). Needs network.
+#
+set -euo pipefail
+
+VFOX_HOME="${VFOX_HOME:-/opt/vfox}"
+export VFOX_HOME
+
+PLUGINS=(java maven gradle nodejs dotnet)
+
+usage() {
+  cat <<'EOF'
+Usage: developer-os-bootstrap
+
+Installs the Developer OS default language runtimes with vfox:
+
+  - Java 21
+  - Maven and Gradle
+  - Node.js LTS (enables pnpm via corepack when possible)
+  - .NET LTS
+
+Plugins are pre-added on the image. This command downloads SDKs into
+$VFOX_HOME (default /opt/vfox) and sets them as your global vfox versions.
+
+Run as your user after a disk install. Do not use sudo.
+EOF
+}
+
+case "${1:-}" in
+  -h|--help)
+    usage
+    exit 0
+    ;;
+esac
+
+if [[ "$(id -u)" -eq 0 ]]; then
+  echo "Run developer-os-bootstrap as your login user, not as root." >&2
+  echo "Root would install SDKs for root instead of your account." >&2
+  exit 1
+fi
+
+if ! command -v vfox >/dev/null 2>&1; then
+  echo "vfox is not on PATH. Refresh extras with: sudo developer-os-update" >&2
+  exit 1
+fi
+
+ensure_vfox_group_session() {
+  if id -nG | grep -qw vfox; then
+    return 0
+  fi
+  if getent group vfox >/dev/null 2>&1 && id -nG | grep -qw "$(id -gn)"; then
+    echo "[bootstrap] You are not in the vfox group in this session." >&2
+    echo "[bootstrap] Log out and back in, or run: newgrp vfox" >&2
+  fi
+}
+
+if [[ -d "${VFOX_HOME}" && ! -w "${VFOX_HOME}" ]]; then
+  if [[ "${DEVELOPER_OS_BOOTSTRAP_SG:-0}" != "1" ]] && id -nG | grep -qw vfox; then
+    echo "[bootstrap] ${VFOX_HOME} is not writable in this shell; retrying with the vfox group..."
+    _cmd="$(printf '%q ' "$0" "$@")"
+    exec sg vfox -c "export DEVELOPER_OS_BOOTSTRAP_SG=1 VFOX_HOME=$(printf '%q' "${VFOX_HOME}"); ${_cmd}"
+  fi
+  echo "[bootstrap] Cannot write ${VFOX_HOME}." >&2
+  echo "[bootstrap] Log out and back in if you were just added to the vfox group." >&2
+  exit 1
+fi
+
+ensure_vfox_group_session
+
+echo "[bootstrap] VFOX_HOME=${VFOX_HOME}"
+echo "[bootstrap] Ensuring vfox plugins: ${PLUGINS[*]}"
+if ! vfox add "${PLUGINS[@]}"; then
+  echo "[bootstrap] WARNING: vfox add reported an error; continuing with plugins that are present." >&2
+fi
+
+install_sdk() {
+  local plugin="$1"
+  shift
+  local ver
+  for ver in "$@"; do
+    echo "[bootstrap] Installing ${plugin}@${ver}..."
+    if vfox install "${plugin}@${ver}"; then
+      if vfox use -g "${plugin}@${ver}"; then
+        echo "[bootstrap] Global version: ${plugin}@${ver}"
+        return 0
+      fi
+    fi
+    echo "[bootstrap] WARNING: ${plugin}@${ver} failed." >&2
+  done
+  echo "[bootstrap] WARNING: could not install ${plugin}." >&2
+  return 1
+}
+
+failed=0
+install_sdk java 21 latest || failed=1
+install_sdk maven latest || failed=1
+install_sdk gradle latest || failed=1
+install_sdk nodejs lts 22 latest || failed=1
+install_sdk dotnet 8 lts latest || failed=1
+
+if command -v git-lfs >/dev/null 2>&1; then
+  git lfs install --skip-repo >/dev/null 2>&1 || true
+fi
+
+hash -r 2>/dev/null || true
+eval "$(vfox activate bash)" 2>/dev/null || true
+
+if command -v corepack >/dev/null 2>&1; then
+  echo "[bootstrap] Enabling pnpm via corepack..."
+  corepack enable >/dev/null 2>&1 || true
+  corepack prepare pnpm@latest --activate >/dev/null 2>&1 || \
+    echo "[bootstrap] WARNING: corepack could not activate pnpm." >&2
+fi
+
+echo
+echo "[bootstrap] Installed tool versions (open a new terminal if a command is missing):"
+command -v java >/dev/null && java -version 2>&1 | head -n1 || echo "  java: not on PATH yet"
+command -v mvn >/dev/null && mvn -version 2>/dev/null | head -n1 || echo "  maven: not on PATH yet"
+command -v gradle >/dev/null && gradle -version 2>/dev/null | awk '/^Gradle/{print; exit}' || echo "  gradle: not on PATH yet"
+command -v node >/dev/null && echo "  node $(node -v)" || echo "  node: not on PATH yet"
+command -v npm >/dev/null && echo "  npm $(npm -v)" || true
+command -v pnpm >/dev/null && echo "  pnpm $(pnpm -v)" || true
+command -v dotnet >/dev/null && dotnet --list-sdks 2>/dev/null | awk '{print "  dotnet sdk "$0}' || echo "  dotnet: not on PATH yet"
+echo
+echo "Next: open JetBrains Toolbox and install IntelliJ IDEA (Java), Rider (.NET), or WebStorm (web)."
+echo "Re-run this command any time; vfox skips versions that are already installed."
+
+if (( failed != 0 )); then
+  echo "[bootstrap] Some runtimes failed (usually network). Re-run after you are online." >&2
+  exit 1
+fi

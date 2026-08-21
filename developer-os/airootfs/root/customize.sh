@@ -19,6 +19,9 @@ usermod -aG wheel,video,input,audio,storage liveuser 2>/dev/null || true
 if getent group docker &>/dev/null; then
   usermod -aG docker liveuser 2>/dev/null || true
 fi
+if getent group vfox &>/dev/null; then
+  usermod -aG vfox liveuser 2>/dev/null || true
+fi
 passwd -d liveuser &>/dev/null || true
 install -d -m 0755 -o liveuser -g liveuser /home/liveuser/Pictures
 chown -R liveuser:liveuser /home/liveuser
@@ -64,6 +67,9 @@ if [[ -x /usr/local/share/developer-os/install-extras.sh ]]; then
   fi
 else
   echo "[customize.sh] WARNING: /usr/local/share/developer-os/install-extras.sh missing." >&2
+fi
+if getent group vfox &>/dev/null; then
+  usermod -aG vfox liveuser 2>/dev/null || true
 fi
 
 # --- Remove Peek at Desktop from Plasma panel templates (bottom application bar) ---

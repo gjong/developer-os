@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Install language runtimes
+Comment=Install Java 21, Node LTS, .NET LTS, Maven, and Gradle with vfox
+Exec=kitty -e bash -lc '/usr/local/bin/developer-os-bootstrap; echo; read -r -p "Press Enter to close…"'
+Icon=applications-development
+Terminal=false
+Categories=Development;System;
+StartupNotify=true

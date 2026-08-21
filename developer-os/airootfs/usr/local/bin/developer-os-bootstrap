@@ -1,0 +1,2 @@
+#!/usr/bin/env bash
+exec /usr/local/share/developer-os/developer-os-bootstrap "$@"

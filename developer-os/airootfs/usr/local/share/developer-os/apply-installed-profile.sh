@@ -18,7 +18,8 @@ install -d \
   "${TARGET_ROOT}/usr/local/share/developer-os" \
   "${TARGET_ROOT}/usr/local/share/bash-completion/completions" \
   "${TARGET_ROOT}/usr/local/share/zsh/site-functions" \
-  "${TARGET_ROOT}/usr/share/applications"
+  "${TARGET_ROOT}/usr/share/applications" \
+  "${TARGET_ROOT}/etc/profile.d"
 
 copy_if_present() {
   local src="$1" dst="$2"
@@ -33,14 +34,16 @@ copy_executable_helper() {
   fi
 }
 
-for helper in install-extras.sh update-extras.sh seed-plasma-mactahoe.sh strip-plasma-showdesktop.sh sync-etc-skel-from-home.sh configure-installed-system.sh apply-installed-profile.sh prepare-installed-mkinitcpio.sh developer-os-welcome developer-os-update; do
+for helper in install-extras.sh update-extras.sh seed-plasma-mactahoe.sh strip-plasma-showdesktop.sh sync-etc-skel-from-home.sh configure-installed-system.sh apply-installed-profile.sh prepare-installed-mkinitcpio.sh developer-os-welcome developer-os-update developer-os-bootstrap; do
   copy_if_present "/usr/local/share/developer-os/${helper}" "${TARGET_ROOT}/usr/local/share/developer-os/"
   chmod 0755 "${TARGET_ROOT}/usr/local/share/developer-os/${helper}" 2>/dev/null || true
 done
 copy_if_present /usr/local/share/developer-os/developer-os-welcome.qml "${TARGET_ROOT}/usr/local/share/developer-os/"
 copy_if_present /usr/share/applications/developer-os-update.desktop "${TARGET_ROOT}/usr/share/applications/"
+copy_if_present /usr/share/applications/developer-os-bootstrap.desktop "${TARGET_ROOT}/usr/share/applications/"
+copy_if_present /etc/profile.d/developer-os-vfox.sh "${TARGET_ROOT}/etc/profile.d/developer-os-vfox.sh"
 
-for helper in developer-os-install developer-os-welcome developer-os-zsh-welcome developer-os-update install-mactahoe-kde-theme.sh Installation_guide choose-mirror; do
+for helper in developer-os-install developer-os-welcome developer-os-zsh-welcome developer-os-update developer-os-bootstrap install-mactahoe-kde-theme.sh Installation_guide choose-mirror; do
   copy_executable_helper "${helper}"
 done
 
@@ -83,6 +86,11 @@ if [[ "${EXTRAS_SELECTION}" == *extras* && -x "${TARGET_ROOT}/usr/local/share/de
   if [[ -f /usr/local/share/zsh/site-functions/_vfox && ! -f "${TARGET_ROOT}/usr/local/share/zsh/site-functions/_vfox" ]]; then
     cp -a /usr/local/share/zsh/site-functions/_vfox "${TARGET_ROOT}/usr/local/share/zsh/site-functions/"
   fi
+  if [[ -d /opt/vfox ]]; then
+    install -d "${TARGET_ROOT}/opt"
+    rsync -a /opt/vfox/ "${TARGET_ROOT}/opt/vfox/"
+    arch-chroot "${TARGET_ROOT}" bash -c 'getent group vfox >/dev/null 2>&1 || groupadd vfox; chown -R root:vfox /opt/vfox; chmod -R g+rwX /opt/vfox' 2>/dev/null || true
+  fi
   if [[ -d /opt/jetbrains-toolbox && ! -d "${TARGET_ROOT}/opt/jetbrains-toolbox" ]]; then
     install -d "${TARGET_ROOT}/opt"
     cp -a /opt/jetbrains-toolbox "${TARGET_ROOT}/opt/"
@@ -117,6 +125,9 @@ fi
 
 # Remove live-session behavior from installed systems.
 rm -f "${TARGET_ROOT}/etc/sddm.conf.d/autologin.conf"
+if ! grep -q '^VFOX_HOME=' "${TARGET_ROOT}/etc/environment" 2>/dev/null; then
+  printf 'VFOX_HOME=/opt/vfox\n' >>"${TARGET_ROOT}/etc/environment"
+fi
 rm -rf "${TARGET_ROOT}/etc/calamares"
 rm -f \
   "${TARGET_ROOT}/usr/share/applications/install-develop-os.desktop" \

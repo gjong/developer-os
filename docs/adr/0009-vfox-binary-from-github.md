@@ -22,4 +22,4 @@ Version is pinned as **`VFOX_VERSION`** (default in `install-extras.sh`); bump w
 
 **Negative / trade-offs:** Requires **network** during `mkarchiso` customize (same class as Flatpak remote setup). Other arches would need different tarball names.
 
-**Follow-up:** If vfox enters `[extra]`, prefer `pacman -S vfox` and drop the script.
+**Follow-up:** If vfox enters `[extra]`, prefer `pacman -S vfox` and drop the script. Shared plugin/SDK layout is [ADR-0014](0014-runtime-bootstrap.md).

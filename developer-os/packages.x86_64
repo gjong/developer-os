@@ -98,3 +98,15 @@ ttf-nerd-fonts-symbols-mono
 ## Misc (small QoL)
 less
 curl
+openssh
+wget
+unzip
+zip
+jq
+python
+git-lfs
+ripgrep
+fd
+tree
+man-db
+htop
