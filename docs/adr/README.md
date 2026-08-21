@@ -20,6 +20,7 @@ ADRs record **why** we made non-obvious choices. They complement the root `READM
 | [0012](0012-calamares-gui-installer.md) | Calamares GUI installer for Developer OS | Accepted |
 | [0013](0013-post-install-app-updates.md) | User-facing updates for post-install extras | Accepted |
 | [0014](0014-runtime-bootstrap.md) | Shared vfox home + `developer-os-bootstrap` for Java/Node/.NET | Accepted |
+| [0015](0015-vscode-and-plasma-apps.md) | Code - OSS + Dolphin/Spectacle instead of Thunar/grim | Accepted |
 
 ## Creating a new ADR
 

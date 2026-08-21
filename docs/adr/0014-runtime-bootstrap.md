@@ -23,4 +23,4 @@ Developer OS targets Java, .NET, and web developers who should start real work s
 
 **Negative / trade-offs:** First hour still needs **network**; group membership requires a new login before `/opt/vfox` is writable; plugin `add` during image build also needs network (same as vfox itself).
 
-**Follow-up:** Phase 2 may add a VS Code path beside JetBrains Toolbox. If vfox lands in `[extra]`, keep this shared-home layout.
+**Follow-up:** VS Code (Code - OSS) and Plasma-native Dolphin/Spectacle are [ADR-0015](0015-vscode-and-plasma-apps.md). If vfox lands in `[extra]`, keep this shared-home layout.

@@ -51,6 +51,7 @@ cmake
 ninja
 extra-cmake-modules
 vim
+code
 docker
 docker-buildx
 docker-compose
@@ -76,16 +77,14 @@ bluez-utils
 
 ## Desktop apps / utilities
 firefox
-thunar
-thunar-volman
+dolphin
+spectacle
 gvfs
 qt6-wayland
 kpmcore
 yaml-cpp
 libpwquality
 libdecor
-grim
-slurp
 wl-clipboard
 xdg-utils
 

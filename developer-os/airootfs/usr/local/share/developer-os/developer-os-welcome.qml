@@ -21,7 +21,7 @@ ApplicationWindow {
             accent: "#7c3aed",
             command: "developer-os-bootstrap",
             bullets: [
-                "Git, Docker, Firefox, vfox, and JetBrains Toolbox are already installed.",
+                "Git, Docker, Firefox, VS Code (Code - OSS), vfox, and JetBrains Toolbox are already installed.",
                 "Run `developer-os-bootstrap` (or Install language runtimes from the launcher) to get Java 21, Node LTS, .NET LTS, Maven, and Gradle.",
                 "Needs network. Open a new terminal afterwards so `java`, `node`, and `dotnet` are on PATH."
             ]
@@ -29,49 +29,49 @@ ApplicationWindow {
         {
             kicker: "Java",
             title: "Java",
-            subtitle: "After bootstrap, JDK 21, Maven, and Gradle are on PATH. Install IntelliJ IDEA from JetBrains Toolbox for a full IDE.",
+            subtitle: "After bootstrap, JDK 21, Maven, and Gradle are on PATH. Open VS Code immediately, or install IntelliJ IDEA from JetBrains Toolbox.",
             accent: "#f97316",
-            command: "java -version && mvn -version",
+            command: "code .",
             bullets: [
                 "Bootstrap installs `java@21`, `maven`, and `gradle` through vfox.",
-                "Open Toolbox and install IntelliJ IDEA (Community or Ultimate).",
-                "Pin a project with `vfox use -p java@21` in the repo, or keep the global default."
+                "`code` is Code - OSS from Arch extra; it is already on PATH.",
+                "For a full Java IDE, open Toolbox and install IntelliJ IDEA."
             ]
         },
         {
             kicker: ".NET",
             title: ".NET",
-            subtitle: "After bootstrap, the .NET SDK is on PATH. Install Rider from JetBrains Toolbox for C# and ASP.NET work. Azure CLI is already installed.",
+            subtitle: "After bootstrap, the .NET SDK is on PATH. Open VS Code immediately, or install Rider from JetBrains Toolbox. Azure CLI is already installed.",
             accent: "#38bdf8",
-            command: "dotnet --info",
+            command: "code .",
             bullets: [
                 "Bootstrap installs the .NET LTS SDK (`dotnet@8`, or another LTS if 8 is unavailable).",
-                "Open Toolbox and install Rider.",
-                "Sign in with `az login` when you work with Azure."
+                "`code` is Code - OSS. Microsoft C# Dev Kit needs Microsoft VS Code: `flatpak install flathub com.visualstudio.code`.",
+                "For a full .NET IDE, open Toolbox and install Rider. Sign in with `az login` for Azure."
             ]
         },
         {
             kicker: "Web",
             title: "Web",
-            subtitle: "After bootstrap, Node.js LTS is on PATH with npm, and pnpm via corepack when possible. Install WebStorm from Toolbox, or use Firefox and Brave for browser testing.",
+            subtitle: "After bootstrap, Node.js LTS is on PATH with npm, and pnpm via corepack when possible. Open VS Code immediately, or install WebStorm from Toolbox. Firefox and Brave are available for browser testing.",
             accent: "#22c55e",
-            command: "node -v && npm -v",
+            command: "code .",
             bullets: [
                 "Bootstrap installs `nodejs` LTS and tries to activate pnpm with `corepack`.",
-                "Open Toolbox and install WebStorm.",
+                "`code` is already installed (Code - OSS). Open Toolbox for WebStorm if you prefer it.",
                 "Use `vfox use -p nodejs@22` (or your project's version) inside a repo."
             ]
         },
         {
-            kicker: "IDEs",
-            title: "JetBrains Toolbox",
-            subtitle: "JetBrains Toolbox installs and updates IDEs from one place: IntelliJ IDEA, Rider, WebStorm, and others.",
+            kicker: "Editors",
+            title: "VS Code and Toolbox",
+            subtitle: "Code - OSS is installed from Arch extra (`code`). JetBrains Toolbox is there when you want IntelliJ IDEA, Rider, or WebStorm.",
             accent: "#a78bfa",
-            command: "jetbrains-toolbox",
+            command: "code .",
             bullets: [
-                "Open Toolbox from the application launcher or run `jetbrains-toolbox`.",
-                "Sign in with your JetBrains account to sync licenses and settings.",
-                "Install IntelliJ IDEA for Java, Rider for .NET, or WebStorm for web work."
+                "Open Visual Studio Code from the launcher or run `code`.",
+                "Microsoft C# Dev Kit needs Microsoft VS Code from Flathub: `flatpak install flathub com.visualstudio.code`.",
+                "Open Toolbox (`jetbrains-toolbox`) for IntelliJ IDEA, Rider, or WebStorm."
             ]
         },
         {

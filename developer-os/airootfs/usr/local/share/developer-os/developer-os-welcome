@@ -55,5 +55,5 @@ if [[ -n "${DISPLAY:-}${WAYLAND_DISPLAY:-}" && -r "${qml_file}" ]]; then
 fi
 
 if command -v kdialog >/dev/null 2>&1; then
-  kdialog --title "Welcome to Developer OS" --msgbox $'Welcome to Developer OS.\n\nFirst hour:\n\n1. Run `developer-os-bootstrap` (your user, not sudo) to install Java 21, Node LTS, .NET LTS, Maven, and Gradle.\n2. Open JetBrains Toolbox and install IntelliJ IDEA (Java), Rider (.NET), or WebStorm (web).\n3. Sign in to GitHub with `gh auth login`.\n\nAlso installed: Git, Docker, Firefox, OpenSSH, and Azure CLI.\n\nReopen this tour with `developer-os-welcome --again`.'
+  kdialog --title "Welcome to Developer OS" --msgbox $'Welcome to Developer OS.\n\nFirst hour:\n\n1. Run `developer-os-bootstrap` (your user, not sudo) to install Java 21, Node LTS, .NET LTS, Maven, and Gradle.\n2. Open VS Code (`code`) now, or JetBrains Toolbox for IntelliJ IDEA, Rider, or WebStorm.\n3. Sign in to GitHub with `gh auth login`.\n\nAlso installed: Git, Docker, Firefox, Dolphin, Spectacle, OpenSSH, and Azure CLI.\n\nReopen this tour with `developer-os-welcome --again`.'
 fi

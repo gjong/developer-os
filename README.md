@@ -8,8 +8,8 @@ Reproducible **archiso** profile with **KDE Plasma (Wayland)** via **SDDM**, dev
 
 - **Boot**: BIOS (SYSLINUX) + UEFI (**systemd-boot**), matching upstream archiso releng layout.
 - **Desktop**: Plasma (Wayland session), SDDM, NetworkManager applet (`plasma-nm`), Kitty, GTK/Qt portal stack (`xdg-desktop-portal-kde` + `-gtk`), **Kvantum**, and the **[MacTahoe-kde](https://github.com/vinceliuice/MacTahoe-kde)** look-and-feel (plus **[MacTahoe-icon-theme](https://github.com/vinceliuice/MacTahoe-icon-theme)** for icons/cursors) installed system-wide when **git** can reach GitHub during the ISO build or disk install; otherwise the installer tries to copy theme files from the live medium. The default desktop wallpaper is the branded **Developer OS** package under `/usr/share/wallpapers/DeveloperOS`.
-- **Apps**: Thunar, Firefox, **Brave** (Flatpak from [Flathub](https://flathub.org/apps/com.brave.Browser)), screenshot tools (`grim` / `slurp`), `wl-clipboard`.
-- **Dev**: Git, `git-lfs`, `base-devel`, **cmake** / **ninja**, **Docker** (service enabled; user in `docker` group), **Ollama**, **AWS CLI v2**, **Azure CLI**, **vfox** (pinned GitHub release → `/usr/local/bin`; plugins for Java, Maven, Gradle, Node, and .NET pre-added under `/opt/vfox` — see [ADR-0009](./docs/adr/0009-vfox-binary-from-github.md) and [ADR-0014](./docs/adr/0014-runtime-bootstrap.md)), **JetBrains Toolbox** (pinned official Linux tarball → `/opt/jetbrains-toolbox`, menu entry; install IntelliJ IDEA, **Rider**, WebStorm, and other JetBrains IDEs from there — see [Toolbox App](https://www.jetbrains.com/toolbox-app/)).
+- **Apps**: Dolphin, Spectacle, Firefox, **Brave** (Flatpak from [Flathub](https://flathub.org/apps/com.brave.Browser)), `wl-clipboard`.
+- **Dev**: Git, `git-lfs`, `base-devel`, **cmake** / **ninja**, **Docker** (service enabled; user in `docker` group), **Ollama**, **AWS CLI v2**, **Azure CLI**, **vfox** (pinned GitHub release → `/usr/local/bin`; plugins for Java, Maven, Gradle, Node, and .NET pre-added under `/opt/vfox` — see [ADR-0009](./docs/adr/0009-vfox-binary-from-github.md) and [ADR-0014](./docs/adr/0014-runtime-bootstrap.md)), **Code - OSS** (`code` from extra; see [ADR-0015](./docs/adr/0015-vscode-and-plasma-apps.md)), **JetBrains Toolbox** (pinned official Linux tarball → `/opt/jetbrains-toolbox`, menu entry; install IntelliJ IDEA, **Rider**, WebStorm, and other JetBrains IDEs from there — see [Toolbox App](https://www.jetbrains.com/toolbox-app/)).
 - **CLI staples**: OpenSSH, wget, unzip/zip, jq, Python, ripgrep, fd, tree, man-db, htop.
 - **First-hour runtimes**: after install, run **`developer-os-bootstrap`** (your user, not sudo) to download Java 21, Node LTS, .NET LTS, Maven, and Gradle. See [Language runtimes](#language-runtimes).
 - **Shell**: Zsh + Starship + autosuggestions + syntax highlighting (from distro packages).
@@ -83,7 +83,7 @@ That command uses **vfox** (plugins already registered) to install **Java 21**, 
 
 Do **not** run it with `sudo`; SDKs must belong to your user. If `/opt/vfox` is not writable, log out and back in so the `vfox` group applies. See [ADR-0014](./docs/adr/0014-runtime-bootstrap.md).
 
-Then install an IDE from **JetBrains Toolbox**: IntelliJ IDEA (Java), Rider (.NET), or WebStorm (web).
+Then open **VS Code** (`code`) or install an IDE from **JetBrains Toolbox**: IntelliJ IDEA (Java), Rider (.NET), or WebStorm (web). Microsoft C# Dev Kit needs Microsoft VS Code from Flathub (`flatpak install flathub com.visualstudio.code`).
 
 ## Updating apps after install
 

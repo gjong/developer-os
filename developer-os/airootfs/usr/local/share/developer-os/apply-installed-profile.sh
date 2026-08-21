@@ -19,7 +19,8 @@ install -d \
   "${TARGET_ROOT}/usr/local/share/bash-completion/completions" \
   "${TARGET_ROOT}/usr/local/share/zsh/site-functions" \
   "${TARGET_ROOT}/usr/share/applications" \
-  "${TARGET_ROOT}/etc/profile.d"
+  "${TARGET_ROOT}/etc/profile.d" \
+  "${TARGET_ROOT}/etc/xdg"
 
 copy_if_present() {
   local src="$1" dst="$2"
@@ -42,6 +43,7 @@ copy_if_present /usr/local/share/developer-os/developer-os-welcome.qml "${TARGET
 copy_if_present /usr/share/applications/developer-os-update.desktop "${TARGET_ROOT}/usr/share/applications/"
 copy_if_present /usr/share/applications/developer-os-bootstrap.desktop "${TARGET_ROOT}/usr/share/applications/"
 copy_if_present /etc/profile.d/developer-os-vfox.sh "${TARGET_ROOT}/etc/profile.d/developer-os-vfox.sh"
+copy_if_present /etc/xdg/mimeapps.list "${TARGET_ROOT}/etc/xdg/mimeapps.list"
 
 for helper in developer-os-install developer-os-welcome developer-os-zsh-welcome developer-os-update developer-os-bootstrap install-mactahoe-kde-theme.sh Installation_guide choose-mirror; do
   copy_executable_helper "${helper}"

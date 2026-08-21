@@ -124,7 +124,7 @@ command -v npm >/dev/null && echo "  npm $(npm -v)" || true
 command -v pnpm >/dev/null && echo "  pnpm $(pnpm -v)" || true
 command -v dotnet >/dev/null && dotnet --list-sdks 2>/dev/null | awk '{print "  dotnet sdk "$0}' || echo "  dotnet: not on PATH yet"
 echo
-echo "Next: open JetBrains Toolbox and install IntelliJ IDEA (Java), Rider (.NET), or WebStorm (web)."
+echo "Next: open VS Code (`code`), or JetBrains Toolbox for IntelliJ IDEA, Rider, or WebStorm."
 echo "Re-run this command any time; vfox skips versions that are already installed."
 
 if (( failed != 0 )); then
