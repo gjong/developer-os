@@ -103,7 +103,7 @@ initrd  /initramfs-linux.img
 options root=UUID=${ROOT_UUID} rw quiet
 EOF
 
-echo "[7/7] Developer OS profile (same as live image: Brave, vfox, JetBrains Toolbox, MacTahoe, dotfiles)..."
+echo "[7/7] Developer OS profile (same as live image: Brave, vfox, JetBrains Toolbox, theme, dotfiles)..."
 PW1="$PW1" DEVELOPER_OS_CREATE_USER=1 DEVELOPER_OS_INSTALL_BOOTLOADER=1 \
   /usr/local/share/developer-os/apply-installed-profile.sh /mnt "$IN_USER" extras
 

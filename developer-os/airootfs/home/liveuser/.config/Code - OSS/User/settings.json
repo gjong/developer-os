@@ -1,0 +1,30 @@
+{
+    "editor.fontFamily": "'JetBrainsMono Nerd Font', 'JetBrains Mono', monospace",
+    "editor.fontLigatures": true,
+    "editor.fontSize": 14,
+    "terminal.integrated.fontFamily": "'JetBrainsMono Nerd Font', monospace",
+    "terminal.integrated.fontSize": 13,
+    "workbench.colorTheme": "Default Dark Modern",
+    "workbench.colorCustomizations": {
+        "terminal.background": "#0f1219",
+        "terminal.foreground": "#e2e8f0",
+        "terminalCursor.foreground": "#7c3aed",
+        "terminal.selectionBackground": "#312e81",
+        "terminal.ansiBlack": "#1a1d26",
+        "terminal.ansiRed": "#fb7185",
+        "terminal.ansiGreen": "#34d399",
+        "terminal.ansiYellow": "#fbbf24",
+        "terminal.ansiBlue": "#60a5fa",
+        "terminal.ansiMagenta": "#a78bfa",
+        "terminal.ansiCyan": "#38bdf8",
+        "terminal.ansiWhite": "#cbd5e1",
+        "terminal.ansiBrightBlack": "#3b4252",
+        "terminal.ansiBrightRed": "#fda4af",
+        "terminal.ansiBrightGreen": "#6ee7b7",
+        "terminal.ansiBrightYellow": "#fcd34d",
+        "terminal.ansiBrightBlue": "#93c5fd",
+        "terminal.ansiBrightMagenta": "#c4b5fd",
+        "terminal.ansiBrightCyan": "#7dd3fc",
+        "terminal.ansiBrightWhite": "#f1f5f9"
+    }
+}

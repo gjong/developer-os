@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="256" height="256" viewBox="0 0 256 256">
+  <title>panel-background</title>
+  <rect id="hint-stretch-borders" x="16" y="16" width="224" height="224" fill="none"/>
+  <rect id="hint-overlay-hints" width="1" height="1" fill="none"/>
+
+  <rect id="center" x="16" y="16" width="224" height="224" fill="#f2f3f6" fill-opacity="0.90"/>
+  <rect id="north" x="16" y="0" width="224" height="16" fill="#f2f3f6" fill-opacity="0.90"/>
+  <rect id="south" x="16" y="240" width="224" height="16" fill="#f2f3f6" fill-opacity="0.90"/>
+  <rect id="west" x="0" y="16" width="16" height="224" fill="#f2f3f6" fill-opacity="0.90"/>
+  <rect id="east" x="240" y="16" width="16" height="224" fill="#f2f3f6" fill-opacity="0.90"/>
+  <path id="northwest" d="M0,16 A16,16 0 0 1 16,0 L16,16 Z" fill="#f2f3f6" fill-opacity="0.90"/>
+  <path id="northeast" d="M240,0 A16,16 0 0 1 256,16 L240,16 Z" fill="#f2f3f6" fill-opacity="0.90"/>
+  <path id="southwest" d="M0,240 A16,16 0 0 0 16,256 L16,240 Z" fill="#f2f3f6" fill-opacity="0.90"/>
+  <path id="southeast" d="M256,240 A16,16 0 0 1 240,256 L240,240 Z" fill="#f2f3f6" fill-opacity="0.90"/>
+
+  <use id="top" xlink:href="#north"/>
+  <use id="bottom" xlink:href="#south"/>
+  <use id="left" xlink:href="#west"/>
+  <use id="right" xlink:href="#east"/>
+  <use id="topleft" xlink:href="#northwest"/>
+  <use id="topright" xlink:href="#northeast"/>
+  <use id="bottomleft" xlink:href="#southwest"/>
+  <use id="bottomright" xlink:href="#southeast"/>
+
+  <rect id="thick-center" x="16" y="16" width="224" height="224" fill="#f2f3f6" fill-opacity="0.90"/>
+  <use id="thick-north" xlink:href="#north"/>
+  <use id="thick-south" xlink:href="#south"/>
+  <use id="thick-east" xlink:href="#east"/>
+  <use id="thick-west" xlink:href="#west"/>
+  <use id="thick-northeast" xlink:href="#northeast"/>
+  <use id="thick-northwest" xlink:href="#northwest"/>
+  <use id="thick-southeast" xlink:href="#southeast"/>
+  <use id="thick-southwest" xlink:href="#southwest"/>
+
+  <rect id="opaque-center" x="16" y="16" width="224" height="224" fill="#f2f3f6"/>
+  <rect id="opaque-north" x="16" y="0" width="224" height="16" fill="#f2f3f6"/>
+  <rect id="opaque-south" x="16" y="240" width="224" height="16" fill="#f2f3f6"/>
+  <rect id="opaque-west" x="0" y="16" width="16" height="224" fill="#f2f3f6"/>
+  <rect id="opaque-east" x="240" y="16" width="16" height="224" fill="#f2f3f6"/>
+  <path id="opaque-northwest" d="M0,16 A16,16 0 0 1 16,0 L16,16 Z" fill="#f2f3f6"/>
+  <path id="opaque-northeast" d="M240,0 A16,16 0 0 1 256,16 L240,16 Z" fill="#f2f3f6"/>
+  <path id="opaque-southwest" d="M0,240 A16,16 0 0 0 16,256 L16,240 Z" fill="#f2f3f6"/>
+  <path id="opaque-southeast" d="M256,240 A16,16 0 0 1 240,256 L240,240 Z" fill="#f2f3f6"/>
+
+  <rect id="translucent-center" x="16" y="16" width="224" height="224" fill="#f2f3f6" fill-opacity="0.90"/>
+  <use id="translucent-north" xlink:href="#north"/>
+  <use id="translucent-south" xlink:href="#south"/>
+  <use id="translucent-east" xlink:href="#east"/>
+  <use id="translucent-west" xlink:href="#west"/>
+  <use id="translucent-northeast" xlink:href="#northeast"/>
+  <use id="translucent-northwest" xlink:href="#northwest"/>
+  <use id="translucent-southeast" xlink:href="#southeast"/>
+  <use id="translucent-southwest" xlink:href="#southwest"/>
+
+  <rect id="floating-center" x="16" y="16" width="224" height="224" rx="16" fill="#f2f3f6" fill-opacity="0.88"/>
+  <rect id="floating-north" x="16" y="0" width="224" height="16" fill="#f2f3f6" fill-opacity="0.88"/>
+  <rect id="floating-south" x="16" y="240" width="224" height="16" fill="#f2f3f6" fill-opacity="0.88"/>
+  <rect id="floating-west" x="0" y="16" width="16" height="224" fill="#f2f3f6" fill-opacity="0.88"/>
+  <rect id="floating-east" x="240" y="16" width="16" height="224" fill="#f2f3f6" fill-opacity="0.88"/>
+  <path id="floating-northwest" d="M0,16 A16,16 0 0 1 16,0 L16,16 Z" fill="#f2f3f6" fill-opacity="0.88"/>
+  <path id="floating-northeast" d="M240,0 A16,16 0 0 1 256,16 L240,16 Z" fill="#f2f3f6" fill-opacity="0.88"/>
+  <path id="floating-southwest" d="M0,240 A16,16 0 0 0 16,256 L16,240 Z" fill="#f2f3f6" fill-opacity="0.88"/>
+  <path id="floating-southeast" d="M256,240 A16,16 0 0 1 240,256 L240,240 Z" fill="#f2f3f6" fill-opacity="0.88"/>
+
+  <rect id="mask-center" x="16" y="16" width="224" height="224" fill="#ffffff"/>
+  <rect id="mask-north" x="16" y="0" width="224" height="16" fill="#ffffff"/>
+  <rect id="mask-south" x="16" y="240" width="224" height="16" fill="#ffffff"/>
+  <rect id="mask-west" x="0" y="16" width="16" height="224" fill="#ffffff"/>
+  <rect id="mask-east" x="240" y="16" width="16" height="224" fill="#ffffff"/>
+  <path id="mask-northwest" d="M0,16 A16,16 0 0 1 16,0 L16,16 Z" fill="#ffffff"/>
+  <path id="mask-northeast" d="M240,0 A16,16 0 0 1 256,16 L240,16 Z" fill="#ffffff"/>
+  <path id="mask-southwest" d="M0,240 A16,16 0 0 0 16,256 L16,240 Z" fill="#ffffff"/>
+  <path id="mask-southeast" d="M256,240 A16,16 0 0 1 240,256 L240,240 Z" fill="#ffffff"/>
+
+  <rect id="shadow-hint-tile-top" x="0" y="0" width="256" height="6" fill="#000000" fill-opacity="0.18"/>
+  <rect id="shadow-top" x="16" y="0" width="224" height="8" fill="#000000" fill-opacity="0.12"/>
+  <rect id="shadow-bottom" x="16" y="248" width="224" height="8" fill="#000000" fill-opacity="0.22"/>
+  <rect id="shadow-left" x="0" y="16" width="8" height="224" fill="#000000" fill-opacity="0.12"/>
+  <rect id="shadow-right" x="248" y="16" width="8" height="224" fill="#000000" fill-opacity="0.12"/>
+</svg>

@@ -7,7 +7,7 @@ Reproducible **archiso** profile with **KDE Plasma (Wayland)** via **SDDM**, dev
 ## What you get
 
 - **Boot**: BIOS (SYSLINUX) + UEFI (**systemd-boot**), matching upstream archiso releng layout.
-- **Desktop**: Plasma (Wayland session), SDDM, NetworkManager applet (`plasma-nm`), Kitty, GTK/Qt portal stack (`xdg-desktop-portal-kde` + `-gtk`), **Kvantum**, and the **[MacTahoe-kde](https://github.com/vinceliuice/MacTahoe-kde)** look-and-feel (plus **[MacTahoe-icon-theme](https://github.com/vinceliuice/MacTahoe-icon-theme)** for icons/cursors) installed system-wide when **git** can reach GitHub during the ISO build or disk install; otherwise the installer tries to copy theme files from the live medium. The default desktop wallpaper is the branded **Developer OS** package under `/usr/share/wallpapers/DeveloperOS`.
+- **Desktop**: Plasma (Wayland session), SDDM, NetworkManager applet (`plasma-nm`), Kitty, GTK/Qt portal stack (`xdg-desktop-portal-kde` + `-gtk`), **Kvantum** (available, not the default widget style), and the first-party **Developer OS** look-and-feel (dark default + light variant, violet accent, Papirus icons, Inter + JetBrains Mono) vendored under `/usr/share` so it works offline — see [ADR-0016](./docs/adr/0016-first-party-plasma-theme.md). Optional MacTahoe icons can be fetched later with `sudo install-developer-os-theme.sh --with-mac-icons`. The default desktop wallpaper is the branded **Developer OS** package under `/usr/share/wallpapers/DeveloperOS`.
 - **Apps**: Dolphin, Spectacle, Firefox, **Brave** (Flatpak from [Flathub](https://flathub.org/apps/com.brave.Browser)), `wl-clipboard`.
 - **Dev**: Git, `git-lfs`, `base-devel`, **cmake** / **ninja**, **Docker** (service enabled; user in `docker` group), **Ollama**, **AWS CLI v2**, **Azure CLI**, **vfox** (pinned GitHub release → `/usr/local/bin`; plugins for Java, Maven, Gradle, Node, and .NET pre-added under `/opt/vfox` — see [ADR-0009](./docs/adr/0009-vfox-binary-from-github.md) and [ADR-0014](./docs/adr/0014-runtime-bootstrap.md)), **Code - OSS** (`code` from extra; see [ADR-0015](./docs/adr/0015-vscode-and-plasma-apps.md)), **JetBrains Toolbox** (pinned official Linux tarball → `/opt/jetbrains-toolbox`, menu entry; install IntelliJ IDEA, **Rider**, WebStorm, and other JetBrains IDEs from there — see [Toolbox App](https://www.jetbrains.com/toolbox-app/)).
 - **CLI staples**: OpenSSH, wget, unzip/zip, jq, Python, ripgrep, fd, tree, man-db, htop.
@@ -59,7 +59,7 @@ qemu-system-x86_64.exe -m 4086 -accel whpx -smp cores=6 -M pc -device ich9-usb-e
 
 ## Install to disk
 
-The live desktop includes a **Calamares** graphical installer. It exposes the same Developer OS defaults as the live session while letting you choose locale, keyboard, hostname, user account, disk layout, and swap. The installed-profile step applies Developer OS extras such as Flathub/Brave, vfox, JetBrains Toolbox, and MacTahoe through the shared helper scripts.
+The live desktop includes a **Calamares** graphical installer. It exposes the same Developer OS defaults as the live session while letting you choose locale, keyboard, hostname, user account, disk layout, and swap. The installed-profile step applies Developer OS extras such as Flathub/Brave, vfox, and JetBrains Toolbox through the shared helper scripts, and copies the first-party Plasma theme from the live medium.
 
 1. Boot the ISO and connect to the network (same as live use).
 2. From Plasma, open **Install Developer OS** from the application launcher.
@@ -69,7 +69,7 @@ The live desktop includes a **Calamares** graphical installer. It exposes the sa
 
 **CLI fallback:** run **`sudo developer-os-install`**. Quick install (menu option 1) still requires **UEFI** firmware, wipes a whole target disk, and uses the same Developer OS profile scripts as the GUI. **`archinstall`** (option 2) supports the usual Arch choices, including BIOS setups, depending on what you configure there.
 
-The installed system receives the same **`liveuser`** dotfiles under **`.config`** (and shell rc files when present), **`vfox`** if it was on the ISO, **Flathub**, and the Developer OS Plasma/MacTahoe profile. **SDDM** is enabled with **`graphical.target`**; log in at the greeter (Plasma Wayland is the default session). See [ADR-0011](./docs/adr/0011-kde-plasma-wayland-session.md).
+The installed system receives the same **`liveuser`** dotfiles under **`.config`** (and shell rc files when present), **`vfox`** if it was on the ISO, **Flathub**, and the Developer OS Plasma theme. **SDDM** is enabled with **`graphical.target`**; log in at the greeter (Plasma Wayland is the default session). See [ADR-0011](./docs/adr/0011-kde-plasma-wayland-session.md) and [ADR-0016](./docs/adr/0016-first-party-plasma-theme.md).
 
 ## Language runtimes
 
@@ -87,7 +87,7 @@ Then open **VS Code** (`code`) or install an IDE from **JetBrains Toolbox**: Int
 
 ## Updating apps after install
 
-Extras installed by **`install-extras.sh`** (Brave Flatpak, **vfox**, **JetBrains Toolbox**, MacTahoe) are pinned at image-build / install time and are not covered by a normal `pacman -Syu` alone. To refresh them to upstream latest (and update Arch packages by default):
+Extras installed by **`install-extras.sh`** (Brave Flatpak, **vfox**, **JetBrains Toolbox**) are pinned at image-build / install time and are not covered by a normal `pacman -Syu` alone. To refresh them to upstream latest (and update Arch packages by default):
 
 ```bash
 sudo developer-os-update
@@ -97,7 +97,7 @@ Useful variants:
 
 ```bash
 developer-os-update --check          # compare installed vs latest (no root)
-sudo developer-os-update --extras-only   # Flatpak + vfox + Toolbox + MacTahoe only
+sudo developer-os-update --extras-only   # Flatpak + vfox + Toolbox only
 ```
 
 From Plasma, open **Update Developer OS apps** in the application launcher (runs the same flow in Kitty). See [ADR-0013](./docs/adr/0013-post-install-app-updates.md).
@@ -124,7 +124,7 @@ Rationale: [ADR-0002](./docs/adr/0002-ci-archlinux-container.md), [ADR-0006](./d
 - **ISO unchanged after editing `airootfs/` or packages:** `mkarchiso` reuses `developer-os/work/` until you remove it; see [Rebuilding when you change the profile](#rebuilding-when-you-change-the-profile).
 - **`invalid group liveuser` during build:** `customize.sh` creates the `liveuser` group before `chown`; see [ADR-0004](./docs/adr/0004-liveuser-and-customize-hook.md).
 - **Black screen or SDDM loop:** confirm **`plasma-desktop`** is installed and try another session from the SDDM session menu. On current Arch Plasma, the Wayland session file is **`plasma.desktop`** under **`/usr/share/wayland-sessions/`** (see [ADR-0011](./docs/adr/0011-kde-plasma-wayland-session.md)).
-- **MacTahoe missing or partial:** the theme is cloned during **`mkarchiso`** and during GUI/CLI disk installs (needs **network**). Offline installs fall back to copying **`/usr/share/...`** from the live session if the ISO was built with the theme present. See [MacTahoe-kde](https://github.com/vinceliuice/MacTahoe-kde).
+- **Theme missing on a disk install:** the first-party Developer OS look-and-feel is vendored in the ISO and copied from the live medium by **`install-developer-os-theme.sh --rsync-from-live`**. No network is required. See [ADR-0016](./docs/adr/0016-first-party-plasma-theme.md).
 - **`vfox` missing:** installed from a **pinned GitHub release** by `install-extras.sh`, which `customize.sh` runs during the ISO build (needs network). After boot, `vfox` is on `PATH`; zsh runs `eval "$(vfox activate zsh)"` with **`VFOX_HOME=/opt/vfox`**. See [ADR-0009](./docs/adr/0009-vfox-binary-from-github.md) and [ADR-0014](./docs/adr/0014-runtime-bootstrap.md). To refresh to the latest release after install, run **`sudo developer-os-update`** (see [Updating apps after install](#updating-apps-after-install)).
 - **`java` / `node` / `dotnet` missing after install:** expected until you run **`developer-os-bootstrap`** as your user. If it cannot write `/opt/vfox`, log out and back in (membership in the `vfox` group).
 - **Calamares missing from the live session:** Calamares is built from its AUR package during `customize.sh` because it is not available from the official Arch repositories enabled in `pacman.conf`; the ISO build needs network access to `aur.archlinux.org`.

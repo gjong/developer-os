@@ -28,10 +28,10 @@ images:
   productWelcome: "develop-os-welcome.png"
 
 style:
-  SidebarBackground: "#292F34"
-  SidebarText: "#FFFFFF"
-  SidebarTextCurrent: "#292F34"
-  SidebarBackgroundCurrent: "#D8DEE9"
+  SidebarBackground: "#1a1d26"
+  SidebarText: "#e2e8f0"
+  SidebarTextCurrent: "#ffffff"
+  SidebarBackgroundCurrent: "#7c3aed"
 
 slideshow: "show.qml"
 slideshowAPI: 2

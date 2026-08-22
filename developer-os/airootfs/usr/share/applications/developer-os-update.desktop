@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=Update Developer OS apps
-Comment=Update Flatpak apps, vfox, JetBrains Toolbox, MacTahoe, and Arch packages
+Comment=Update Flatpak apps, vfox, JetBrains Toolbox, and Arch packages
 Exec=kitty -e bash -lc '/usr/local/bin/developer-os-update; echo; read -r -p "Press Enter to close…"'
 Icon=system-software-update
 Terminal=false

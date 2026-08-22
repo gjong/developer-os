@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12">
+  <g id="active-center">
+    <circle cx="6" cy="6" r="5.2" fill="#28c840"/>
+  </g>
+  <g id="hover-center">
+    <circle cx="6" cy="6" r="5.2" fill="#28c840"/>
+    <rect x="3.6" y="3.6" width="4.8" height="4.8" rx="0.6" fill="none" stroke="#064e3b" stroke-width="1.05"/>
+  </g>
+  <g id="pressed-center">
+    <circle cx="6" cy="6" r="5.2" fill="#1fad36"/>
+    <rect x="3.6" y="3.6" width="4.8" height="4.8" rx="0.6" fill="none" stroke="#064e3b" stroke-width="1.05"/>
+  </g>
+  <g id="inactive-center">
+    <circle cx="6" cy="6" r="5.2" fill="#3b4252"/>
+  </g>
+  <g id="hover-inactive-center">
+    <circle cx="6" cy="6" r="5.2" fill="#28c840"/>
+    <rect x="3.6" y="3.6" width="4.8" height="4.8" rx="0.6" fill="none" stroke="#064e3b" stroke-width="1.05"/>
+  </g>
+  <g id="deactivated-center">
+    <circle cx="6" cy="6" r="5.2" fill="#3b4252"/>
+  </g>
+</svg>

@@ -1,0 +1,10 @@
+{
+    "KPlugin": {
+        "Authors": [{"Name": "Developer OS"}],
+        "Description": "macOS-inspired Developer OS window decoration",
+        "Id": "DeveloperOS-Light",
+        "License": "LGPL-2.1-or-later",
+        "Name": "Developer OS Light",
+        "Version": "1.0"
+    }
+}

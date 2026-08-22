@@ -1,0 +1,17 @@
+{
+    "KPackageStructure": "Plasma/LookAndFeel",
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Developer OS"
+            }
+        ],
+        "Description": "macOS-inspired Developer OS desktop (dark, violet accent)",
+        "Id": "com.developeros.plasma.dark",
+        "License": "LGPL-2.1-or-later",
+        "Name": "Developer OS Dark",
+        "Website": ""
+    },
+    "Keywords": "Desktop;Workspace;Appearance;Look and Feel;Accessibility;Dark",
+    "X-Plasma-MainScript": "defaults"
+}

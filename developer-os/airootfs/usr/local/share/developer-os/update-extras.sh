@@ -2,7 +2,7 @@
 #
 # Developer OS — update apps installed outside pacman (and optionally the system).
 # Updates: Flatpak apps, vfox (latest GitHub release), JetBrains Toolbox (latest),
-# MacTahoe theme (git tip). Optionally runs pacman -Syu.
+# and optionally the first-party theme validation. Optionally runs pacman -Syu.
 #
 # Run as root for apply. Prefer: sudo developer-os-update
 #
@@ -20,7 +20,7 @@ Update Developer OS extras (and optionally Arch packages) to the latest versions
 
 Options:
   --check         Show installed vs latest versions; do not change anything
-  --extras-only   Skip pacman -Syu (Flatpak + vfox + Toolbox + MacTahoe only)
+  --extras-only   Skip pacman -Syu (Flatpak + vfox + Toolbox only)
   --system        Include pacman -Syu (default)
   -h, --help      Show this help
 
@@ -166,11 +166,11 @@ else
 fi
 
 if [[ ! -x /usr/local/share/developer-os/install-extras.sh ]]; then
-  echo "[update-extras] ERROR: install-extras.sh missing; cannot refresh vfox/Toolbox/MacTahoe." >&2
+  echo "[update-extras] ERROR: install-extras.sh missing; cannot refresh vfox/Toolbox." >&2
   exit 1
 fi
 
-echo "[update-extras] Refreshing vfox ${LATEST_VFOX}, JetBrains Toolbox ${LATEST_TOOLBOX}, and MacTahoe…"
+echo "[update-extras] Refreshing vfox ${LATEST_VFOX} and JetBrains Toolbox ${LATEST_TOOLBOX}…"
 set +e
 env VFOX_VERSION="${LATEST_VFOX}" TOOLBOX_BUILD="${LATEST_TOOLBOX}" \
   /usr/local/share/developer-os/install-extras.sh

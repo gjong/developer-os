@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 #
 # Developer OS — optional components also applied on the live image (customize.sh).
-# Installs: Flathub + Brave Flatpak, vfox, JetBrains Toolbox, MacTahoe theme (system-wide).
+# Installs: Flathub + Brave Flatpak, vfox, JetBrains Toolbox, and validates the Developer OS theme.
 # Run as root (mkarchiso chroot or arch-chroot /mnt). Failures are non-fatal except where noted.
 #
 set -euo pipefail
@@ -146,17 +146,17 @@ else
   echo "[install-extras] WARNING: curl missing; skipping JetBrains Toolbox." >&2
 fi
 
-# --- MacTahoe KDE theme ---
-if [[ -x /usr/local/bin/install-mactahoe-kde-theme.sh ]]; then
+# --- Developer OS Plasma theme (vendored in airootfs; no network required) ---
+if [[ -x /usr/local/bin/install-developer-os-theme.sh ]]; then
   set +e
-  /usr/local/bin/install-mactahoe-kde-theme.sh
+  /usr/local/bin/install-developer-os-theme.sh
   _mt=$?
   set -e
   if ((_mt != 0)); then
-    echo "[install-extras] WARNING: MacTahoe theme install failed (${_mt}); need git + network (or rsync from live during disk install)." >&2
+    echo "[install-extras] WARNING: Developer OS theme validation failed (${_mt})." >&2
   else
-    echo "[install-extras] MacTahoe theme installed."
+    echo "[install-extras] Developer OS theme present."
   fi
 else
-  echo "[install-extras] WARNING: install-mactahoe-kde-theme.sh missing." >&2
+  echo "[install-extras] WARNING: install-developer-os-theme.sh missing." >&2
 fi

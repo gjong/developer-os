@@ -85,8 +85,10 @@ xdg-utils
 ## Fonts / console
 terminus-font
 ttf-dejavu
+inter-font
 ttf-jetbrains-mono-nerd
 ttf-nerd-fonts-symbols-mono
+papirus-icon-theme
 
 ## Filesystems (root is ext4; ESP is FAT)
 e2fsprogs

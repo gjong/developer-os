@@ -21,9 +21,10 @@ ADRs record **why** we made non-obvious choices. They complement the root `READM
 | [0013](0013-post-install-app-updates.md) | User-facing updates for post-install extras | Accepted |
 | [0014](0014-runtime-bootstrap.md) | Shared vfox home + `developer-os-bootstrap` for Java/Node/.NET | Accepted |
 | [0015](0015-vscode-and-plasma-apps.md) | Code - OSS + Dolphin/Spectacle instead of Thunar/grim | Accepted |
+| [0016](0016-first-party-plasma-theme.md) | First-party Developer OS Plasma theme (dark + light) | Accepted |
 
 ## Creating a new ADR
 
-1. Copy [0000-template.md](0000-template.md) to the next number, e.g. `0013-my-topic.md`.
+1. Copy [0000-template.md](0000-template.md) to the next number, e.g. `0017-my-topic.md`.
 2. Fill in Status, Context, Decision, Consequences.
 3. Add a row to the table above.

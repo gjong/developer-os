@@ -35,7 +35,7 @@ copy_executable_helper() {
   fi
 }
 
-for helper in install-extras.sh update-extras.sh seed-plasma-mactahoe.sh strip-plasma-showdesktop.sh sync-etc-skel-from-home.sh configure-installed-system.sh apply-installed-profile.sh prepare-installed-mkinitcpio.sh developer-os-welcome developer-os-update developer-os-bootstrap; do
+for helper in install-extras.sh update-extras.sh seed-plasma-theme.sh strip-plasma-showdesktop.sh sync-etc-skel-from-home.sh configure-installed-system.sh apply-installed-profile.sh prepare-installed-mkinitcpio.sh developer-os-welcome developer-os-update developer-os-bootstrap; do
   copy_if_present "/usr/local/share/developer-os/${helper}" "${TARGET_ROOT}/usr/local/share/developer-os/"
   chmod 0755 "${TARGET_ROOT}/usr/local/share/developer-os/${helper}" 2>/dev/null || true
 done
@@ -45,14 +45,16 @@ copy_if_present /usr/share/applications/developer-os-bootstrap.desktop "${TARGET
 copy_if_present /etc/profile.d/developer-os-vfox.sh "${TARGET_ROOT}/etc/profile.d/developer-os-vfox.sh"
 copy_if_present /etc/xdg/mimeapps.list "${TARGET_ROOT}/etc/xdg/mimeapps.list"
 
-for helper in developer-os-install developer-os-welcome developer-os-zsh-welcome developer-os-update developer-os-bootstrap install-mactahoe-kde-theme.sh Installation_guide choose-mirror; do
+for helper in developer-os-install developer-os-welcome developer-os-zsh-welcome developer-os-update developer-os-bootstrap install-developer-os-theme.sh Installation_guide choose-mirror; do
   copy_executable_helper "${helper}"
 done
 
 copy_if_present /usr/local/share/developer-os/installer-packages.list "${TARGET_ROOT}/usr/local/share/developer-os/"
 
-# Branded wallpaper (airootfs); not part of pacstrap package set.
-if [[ -d /usr/share/wallpapers/DeveloperOS ]]; then
+# First-party theme + branded wallpaper (airootfs); not part of pacstrap.
+if [[ -x /usr/local/bin/install-developer-os-theme.sh ]]; then
+  /usr/local/bin/install-developer-os-theme.sh --rsync-from-live "${TARGET_ROOT}" || true
+elif [[ -d /usr/share/wallpapers/DeveloperOS ]]; then
   install -d "${TARGET_ROOT}/usr/share/wallpapers"
   cp -a /usr/share/wallpapers/DeveloperOS "${TARGET_ROOT}/usr/share/wallpapers/"
 elif [[ -f /usr/share/wallpapers/wallpaper.png ]]; then
@@ -72,12 +74,6 @@ if [[ "${EXTRAS_SELECTION}" == *extras* && -x "${TARGET_ROOT}/usr/local/share/de
   if ((_ex != 0)); then
     echo "[apply-installed-profile] WARNING: install-extras.sh exited ${_ex}." >&2
   fi
-  if [[ ! -d "${TARGET_ROOT}/usr/share/plasma/look-and-feel/com.github.vinceliuice.MacTahoe-Light" \
-        && ! -d "${TARGET_ROOT}/usr/share/plasma/look-and-feel/com.github.vinceliuice.MacTahoe-Dark" ]]; then
-    echo "[apply-installed-profile] MacTahoe theme not on target; copying from live system if present..." >&2
-    /usr/local/bin/install-mactahoe-kde-theme.sh --rsync-from-live "${TARGET_ROOT}" || true
-  fi
-
   # Fallback when install-extras could not download during install.
   if [[ -x /usr/local/bin/vfox && ! -x "${TARGET_ROOT}/usr/local/bin/vfox" ]]; then
     cp -a /usr/local/bin/vfox "${TARGET_ROOT}/usr/local/bin/"
@@ -110,13 +106,13 @@ if [[ -d /home/liveuser/.config ]]; then
   arch-chroot "${TARGET_ROOT}" chown -R "${IN_USER}:${IN_USER}" "/home/${IN_USER}" 2>/dev/null || true
 fi
 
-if [[ -d "${TARGET_ROOT}/home/${IN_USER}" && -x "${TARGET_ROOT}/usr/local/share/developer-os/seed-plasma-mactahoe.sh" ]]; then
+if [[ -d "${TARGET_ROOT}/home/${IN_USER}" && -x "${TARGET_ROOT}/usr/local/share/developer-os/seed-plasma-theme.sh" ]]; then
   set +e
-  arch-chroot "${TARGET_ROOT}" /usr/local/share/developer-os/seed-plasma-mactahoe.sh "${IN_USER}"
+  arch-chroot "${TARGET_ROOT}" /usr/local/share/developer-os/seed-plasma-theme.sh "${IN_USER}"
   _seed=$?
   set -e
   if ((_seed != 0)); then
-    echo "[apply-installed-profile] WARNING: seed-plasma-mactahoe.sh exited ${_seed}." >&2
+    echo "[apply-installed-profile] WARNING: seed-plasma-theme.sh exited ${_seed}." >&2
   fi
   arch-chroot "${TARGET_ROOT}" chown -R "${IN_USER}:${IN_USER}" "/home/${IN_USER}" 2>/dev/null || true
 fi

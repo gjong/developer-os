@@ -56,7 +56,7 @@ else
   rm -f /usr/share/applications/install-develop-os.desktop
 fi
 
-# --- Same optional stack as disk install (Flathub/Brave, vfox, JetBrains Toolbox, MacTahoe) ---
+# --- Same optional stack as disk install (Flathub/Brave, vfox, JetBrains Toolbox, theme) ---
 if [[ -x /usr/local/share/developer-os/install-extras.sh ]]; then
   set +e
   /usr/local/share/developer-os/install-extras.sh
@@ -77,13 +77,13 @@ if [[ -x /usr/local/share/developer-os/strip-plasma-showdesktop.sh ]]; then
   /usr/local/share/developer-os/strip-plasma-showdesktop.sh /
 fi
 
-# --- MacTahoe: seed Plasma for liveuser (install.sh -c dark installs …MacTahoe-Dark, not …Light) ---
-if [[ -x /usr/local/share/developer-os/seed-plasma-mactahoe.sh ]]; then
-  /usr/local/share/developer-os/seed-plasma-mactahoe.sh liveuser
+# --- Developer OS theme: seed Plasma for liveuser ---
+if [[ -x /usr/local/share/developer-os/seed-plasma-theme.sh ]]; then
+  /usr/local/share/developer-os/seed-plasma-theme.sh liveuser
   chown -R liveuser:liveuser /home/liveuser
-  echo "[customize.sh] Plasma MacTahoe defaults applied for liveuser."
+  echo "[customize.sh] Plasma Developer OS defaults applied for liveuser."
 else
-  echo "[customize.sh] WARNING: seed-plasma-mactahoe.sh missing." >&2
+  echo "[customize.sh] WARNING: seed-plasma-theme.sh missing." >&2
 fi
 
 # --- New users: same dotfiles + Plasma as liveuser (useradd -m copies /etc/skel) ---

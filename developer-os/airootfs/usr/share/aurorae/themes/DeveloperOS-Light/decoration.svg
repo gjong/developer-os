@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="86" height="86" viewBox="0 0 86 86">
+  <title>decoration</title>
+  <g id="decoration-active">
+    <rect x="0" y="0" width="86" height="86" rx="10" fill="#fdfdfe"/>
+  </g>
+  <g id="decoration-inactive">
+    <rect x="0" y="0" width="86" height="86" rx="10" fill="#f2f3f6"/>
+  </g>
+  <g id="decoration-active-maximized">
+    <rect x="0" y="0" width="86" height="86" fill="#fdfdfe"/>
+  </g>
+  <g id="decoration-inactive-maximized">
+    <rect x="0" y="0" width="86" height="86" fill="#f2f3f6"/>
+  </g>
+  <g id="decoration">
+    <rect x="0" y="0" width="86" height="86" rx="10" fill="#fdfdfe"/>
+  </g>
+</svg>

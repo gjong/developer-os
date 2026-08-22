@@ -18,7 +18,6 @@ strip_layouts() {
   shopt -s nullglob
   for f in \
     "${root}/usr/share/plasma/layout-templates/org.kde.plasma.desktop.defaultPanel/contents/layout.js" \
-    "${root}/usr/share/plasma/layout-templates/org.github.desktop.MacOSPanel/contents/layout.js" \
     "${root}/usr/share/plasma/look-and-feel/"*/contents/layouts/org.kde.plasma.desktop-layout.js; do
     [[ -f "${f}" ]] || continue
     if grep -q 'org\.kde\.plasma\.showdesktop' "${f}"; then

@@ -1,0 +1,17 @@
+{
+    "KPlugin": {
+        "Authors": [
+            {
+                "Name": "Developer OS"
+            }
+        ],
+        "Category": "",
+        "Description": "Developer OS light Plasma desktop theme",
+        "EnabledByDefault": true,
+        "Id": "DeveloperOS-Light",
+        "License": "LGPL-2.1-or-later",
+        "Name": "Developer OS Light",
+        "Version": "1.0"
+    },
+    "X-Plasma-API": "5.0"
+}

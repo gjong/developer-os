@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <title>Developer OS launcher</title>
+  <defs>
+    <linearGradient id="badge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8b5cf6"/>
+      <stop offset="1" stop-color="#6d28d9"/>
+    </linearGradient>
+  </defs>
+  <!-- Compact badge: readable at ~1622px in the 26px menu bar. -->
+  <rect x="1.25" y="1.25" width="21.5" height="21.5" rx="6" fill="url(#badge)"/>
+  <rect x="1.25" y="1.25" width="21.5" height="21.5" rx="6" fill="none" stroke="#dfd6ff" stroke-opacity="0.28" stroke-width="0.8"/>
+  <!-- </> brand mark used by the zsh banner and Starship prompt. -->
+  <path fill="#f8fafc" d="
+    M8.55 6.35 4.2 12l4.35 5.65-1.35 1.05L2.35 12 7.2 5.3z
+    M14.15 5.85h-1.7L9.15 18.15h1.7z
+    M15.45 6.35 19.8 12l-4.35 5.65 1.35 1.05L21.65 12 16.8 5.3z"/>
+</svg>
