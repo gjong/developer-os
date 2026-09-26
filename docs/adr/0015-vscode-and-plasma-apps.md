@@ -23,4 +23,4 @@ The Phase 2 audit asked for a VS Code path. Arch extra has **Code - OSS** (`code
 
 **Negative / trade-offs:** Code - OSS does not run Microsoft C# Dev Kit; ISO grows by the Electron `code` package; users who want the Microsoft build take an extra Flatpak step.
 
-**Follow-up:** None required for this decision. Workflow extras (direnv, mkcert, HTTP/DB clients) remain Phase 3.
+**Follow-up:** `direnv` is now delivered by [ADR-0017](0017-direnv-per-project-env.md). The remaining workflow extras (mkcert, HTTP/DB clients) stay Phase 3.

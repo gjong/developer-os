@@ -9,7 +9,7 @@ Reproducible **archiso** profile with **KDE Plasma (Wayland)** via **SDDM**, dev
 - **Boot**: BIOS (SYSLINUX) + UEFI (**systemd-boot**), matching upstream archiso releng layout.
 - **Desktop**: Plasma (Wayland session), SDDM, NetworkManager applet (`plasma-nm`), Kitty, GTK/Qt portal stack (`xdg-desktop-portal-kde` + `-gtk`), **Kvantum** (available, not the default widget style), and the first-party **Developer OS** look-and-feel (dark default + light variant, violet accent, Papirus icons, Inter + JetBrains Mono) vendored under `/usr/share` so it works offline — see [ADR-0016](./docs/adr/0016-first-party-plasma-theme.md). Optional MacTahoe icons can be fetched later with `sudo install-developer-os-theme.sh --with-mac-icons`. The default desktop wallpaper is the branded **Developer OS** package under `/usr/share/wallpapers/DeveloperOS`.
 - **Apps**: Dolphin, Spectacle, Firefox, **Brave** (Flatpak from [Flathub](https://flathub.org/apps/com.brave.Browser)), `wl-clipboard`.
-- **Dev**: Git, `git-lfs`, `base-devel`, **cmake** / **ninja**, **Docker** (service enabled; user in `docker` group), **Ollama**, **AWS CLI v2**, **Azure CLI**, **vfox** (pinned GitHub release → `/usr/local/bin`; plugins for Java, Maven, Gradle, Node, and .NET pre-added under `/opt/vfox` — see [ADR-0009](./docs/adr/0009-vfox-binary-from-github.md) and [ADR-0014](./docs/adr/0014-runtime-bootstrap.md)), **Code - OSS** (`code` from extra; see [ADR-0015](./docs/adr/0015-vscode-and-plasma-apps.md)), **JetBrains Toolbox** (pinned official Linux tarball → `/opt/jetbrains-toolbox`, menu entry; install IntelliJ IDEA, **Rider**, WebStorm, and other JetBrains IDEs from there — see [Toolbox App](https://www.jetbrains.com/toolbox-app/)).
+- **Dev**: Git, `git-lfs`, `base-devel`, **cmake** / **ninja**, **Docker** (service enabled; user in `docker` group), **Ollama**, **AWS CLI v2**, **Azure CLI**, **vfox** (pinned GitHub release → `/usr/local/bin`; plugins for Java, Maven, Gradle, Node, and .NET pre-added under `/opt/vfox` — see [ADR-0009](./docs/adr/0009-vfox-binary-from-github.md) and [ADR-0014](./docs/adr/0014-runtime-bootstrap.md)), **direnv** (preinstalled, zsh hook enabled by default — see [Per-project environments](#per-project-environments) and [ADR-0017](./docs/adr/0017-direnv-per-project-env.md)), **Code - OSS** (`code` from extra; see [ADR-0015](./docs/adr/0015-vscode-and-plasma-apps.md)), **JetBrains Toolbox** (pinned official Linux tarball → `/opt/jetbrains-toolbox`, menu entry; install IntelliJ IDEA, **Rider**, WebStorm, and other JetBrains IDEs from there — see [Toolbox App](https://www.jetbrains.com/toolbox-app/)).
 - **CLI staples**: OpenSSH, wget, unzip/zip, jq, Python, ripgrep, fd, tree, man-db, htop.
 - **First-hour runtimes**: after install, run **`developer-os-bootstrap`** (your user, not sudo) to download Java 21, Node LTS, .NET LTS, Maven, and Gradle. See [Language runtimes](#language-runtimes).
 - **Shell**: Zsh + Starship + autosuggestions + syntax highlighting (from distro packages).
@@ -84,6 +84,16 @@ That command uses **vfox** (plugins already registered) to install **Java 21**, 
 Do **not** run it with `sudo`; SDKs must belong to your user. If `/opt/vfox` is not writable, log out and back in so the `vfox` group applies. See [ADR-0014](./docs/adr/0014-runtime-bootstrap.md).
 
 Then open **VS Code** (`code`) or install an IDE from **JetBrains Toolbox**: IntelliJ IDEA (Java), Rider (.NET), or WebStorm (web). Microsoft C# Dev Kit needs Microsoft VS Code from Flathub (`flatpak install flathub com.visualstudio.code`).
+
+## Per-project environments
+
+**direnv** is preinstalled and its zsh hook is enabled in the default `.zshrc` (after vfox activation, so an `.envrc` can use vfox-managed SDKs). Drop an `.envrc` in a project and approve it once:
+
+```bash
+echo 'export FOO=bar' > .envrc && direnv allow
+```
+
+The environment loads on `cd` into the directory and unloads on the way out. Defaults live in `~/.config/direnv/`: `direnv.toml` (quiet env diffs, `warn_timeout`) and `direnvrc` with a `use vfox` helper (`use vfox java@21.0.5-tem`) alongside the stdlib `dotenv`, `layout python`, and `PATH_add`. See [ADR-0017](./docs/adr/0017-direnv-per-project-env.md).
 
 ## Updating apps after install
 
