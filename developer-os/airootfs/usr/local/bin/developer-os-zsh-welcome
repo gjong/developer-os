@@ -307,6 +307,7 @@ if (( need_bootstrap == 1 )); then
   tip "developer-os-bootstrap" "install Java 21, Node LTS, .NET LTS"
 fi
 tip "code ." "open Code - OSS in this directory"
+tip "direnv allow" "load this project's .envrc (hook is on)"
 tip "gh auth login" "connect GitHub"
 tip "jetbrains-toolbox" "IntelliJ, Rider, or WebStorm"
 blank

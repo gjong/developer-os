@@ -24,6 +24,11 @@ if command -v vfox >/dev/null 2>&1; then
   eval "$(vfox activate zsh)"
 fi
 
+# direnv — per-project environment loading (runs after vfox so .envrc can use its SDKs)
+if command -v direnv >/dev/null 2>&1; then
+  eval "$(direnv hook zsh)"
+fi
+
 # System welcome banner (skip with DEVELOPER_OS_NO_ZSH_WELCOME=1)
 if [[ -o interactive ]] && command -v developer-os-zsh-welcome >/dev/null 2>&1; then
   developer-os-zsh-welcome

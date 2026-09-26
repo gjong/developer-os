@@ -44,6 +44,7 @@ kitty
 ## Development
 git
 github-cli
+direnv
 aws-cli-v2
 azure-cli
 base-devel

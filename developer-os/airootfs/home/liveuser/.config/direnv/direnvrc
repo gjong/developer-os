@@ -1,0 +1,47 @@
+# Developer OS — global direnv library.
+#
+# Functions defined here are available to every .envrc on this system.
+# Reference: https://direnv.net/man/direnv-stdlib.1.html
+#
+# Common stdlib helpers you can use in a project .envrc:
+#   dotenv              # load a .env file next to the .envrc
+#   dotenv_if_exists    # same, but do not fail when .env is missing
+#   layout python       # create/activate a .direnv virtualenv
+#   layout node         # put ./node_modules/.bin on PATH
+#   PATH_add ./bin      # prepend a project directory to PATH
+#
+# After creating or editing an .envrc, run: direnv allow
+
+# use vfox [<tool>@<version> ...]
+#
+# Activate vfox-managed SDKs for this directory. With no arguments the
+# versions come from the project's .tool-versions / vfox config.
+#
+#   use vfox                    # honour .tool-versions in the project
+#   use vfox java@21.0.5-tem    # pin explicit versions for this directory
+use_vfox() {
+  if ! has vfox; then
+    log_error "vfox is not installed; run developer-os-bootstrap first."
+    return 1
+  fi
+
+  local tool
+  for tool in "$@"; do
+    vfox use -s "${tool}" >/dev/null || {
+      log_error "vfox use ${tool} failed."
+      return 1
+    }
+  done
+
+  eval "$(vfox env --shell bash --full)"
+}
+
+# use dotenv_template <file>
+#
+# Load a committed template (e.g. .env.example) before the developer's own
+# .env so missing keys still have documented defaults.
+use_dotenv_template() {
+  local template="${1:-.env.example}"
+  dotenv_if_exists "${template}"
+  dotenv_if_exists .env
+}
